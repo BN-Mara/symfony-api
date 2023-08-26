@@ -1,0 +1,15 @@
+sonata_user:
+    class:
+        user: App\Entity\SonataUserUser
+    resetting:
+        email:
+            address: sonata@localhost
+            sender_name: Sonata Admin
+    #security_acl: true
+    admin: # Admin Classes
+        user:
+            class: Sonata\UserBundle\Admin\Entity\UserAdmin
+            controller: '%sonata.admin.configuration.default_controller%'
+            translation: SonataUserBundle
+    profile:
+        default_avatar: bundles/sonatauser/default_avatar.png
