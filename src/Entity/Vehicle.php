@@ -7,9 +7,13 @@ use App\Repository\VehicleRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\Put;
+use ApiPlatform\Metadata\GetCollection;
 
 #[ORM\Entity(repositoryClass: VehicleRepository::class)]
-#[ApiResource]
+#[ApiResource(operations:[new Get(), new Post(), new Put(),new GetCollection()])]
 class Vehicle
 {
     #[ORM\Id]
