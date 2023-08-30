@@ -11,7 +11,7 @@ class RouteStateProcessor implements ProcessorInterface
     {
         
         // Handle the state
-        $data->endingTime = new \DateTime('now',new \DateTimeZone('Africa/Kinshasa'));
+        $data->setEndingTime(new \DateTime('now',new \DateTimeZone('Africa/Kinshasa')));
         $this->process($data, $operation, $uriVariables, $context);
         //return $result;
     }
