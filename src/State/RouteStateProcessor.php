@@ -12,7 +12,7 @@ class RouteStateProcessor implements ProcessorInterface
         
         // Handle the state
         $data->setEndingTime(new \DateTime('now',new \DateTimeZone('Africa/Kinshasa')));
-        $result = $this->persistProcessor->process($data, $operation, $uriVariables, $context);
+        $this->process($data, $operation, $uriVariables, $context);
         //return $result;
     }
 }
