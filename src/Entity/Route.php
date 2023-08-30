@@ -10,9 +10,10 @@ use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Put;
 use ApiPlatform\Metadata\GetCollection;
+use App\State\RouteStateProcessor;
 
 #[ORM\Entity(repositoryClass: RouteRepository::class)]
-#[ApiResource(operations:[new Get(), new Post(), new Put(),new GetCollection()])]
+#[ApiResource(operations:[new Get(), new Post(), new Put(processor: RouteStateProcessor::class),new GetCollection()])]
 class Route
 {
     #[ORM\Id]
