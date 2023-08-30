@@ -7,12 +7,15 @@ use ApiPlatform\State\ProcessorInterface;
 
 class RouteStateProcessor implements ProcessorInterface
 {
+    public function __construct(private ProcessorInterface $persistProcessor, private ProcessorInterface $removeProcessor)
+    {
+    }
     public function process(mixed $data, Operation $operation, array $uriVariables = [], array $context = []): void
     {
         
         // Handle the state
         $data->setEndingTime(new \DateTime('now',new \DateTimeZone('Africa/Kinshasa')));
-        $this->process($data, $operation, $uriVariables, $context);
-        //return $result;
+        $result = $this->persistProcessor->process($data, $operation, $uriVariables, $context);
+        return $result;
     }
 }
