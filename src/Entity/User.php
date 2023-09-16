@@ -46,6 +46,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(mappedBy: 'conveyor', targetEntity: Route::class)]
     private Collection $routes;
 
+    #[ORM\Column(length: 25, nullable: true)]
+    private ?string $tagUid = null;
+
 
     public function __construct()
     {
@@ -196,6 +199,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
                 $route->setConveyor(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getTagUid(): ?string
+    {
+        return $this->tagUid;
+    }
+
+    public function setTagUid(?string $tagUid): self
+    {
+        $this->tagUid = $tagUid;
 
         return $this;
     }

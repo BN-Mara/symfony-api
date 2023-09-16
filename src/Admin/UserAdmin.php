@@ -49,17 +49,8 @@ final class UserAdmin extends AbstractAdmin{
                 ],
         
         ]);
-        $form->get('roles')
-        ->addModelTransformer(new CallbackTransformer(
-            function ($rolesArray) {
-                 // transform the array to a string
-                 return count(array($rolesArray))? $rolesArray[0]: null;
-            },
-            function ($rolesString) {
-                 // transform the string back to an array
-                 return [$rolesString];
-            }
-    ));
+        $form->add('tagUid', TextType::class);
+        
     }
 
     protected function configureDatagridFilters(DatagridMapper $datagrid): void
@@ -69,6 +60,7 @@ final class UserAdmin extends AbstractAdmin{
         $datagrid->add('userame');
         $datagrid->add('isActive');
         $datagrid->add('roles');
+        $datagrid->add('tagUid');
     
     }
 
@@ -80,6 +72,7 @@ final class UserAdmin extends AbstractAdmin{
         $list->addIdentifier('phone');
         $list->addIdentifier('roles');
         $list->addIdentifier('isActive');
+        $list->addIdentifier('tagUid');
 
         
     }
@@ -92,6 +85,8 @@ final class UserAdmin extends AbstractAdmin{
         $show->add('address');
         $show->add('isActive');
         $show->add('roles');
+        $show->add('tagUid');
+
         
         
     }
