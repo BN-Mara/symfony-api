@@ -83,6 +83,47 @@ class RegistrationController extends AbstractController
     ]);
     }
 
+    #[Route('/nfc_login', name: 'app_nfc_login', methods:"POST")]
+    public function login(Request $request): Response 
+    {
+        //$authenticationSuccessHandler = $this->container->get('lexik_jwt_authentication.handler.authentication_success');
+        //$jwtManager = $this->container->get('lexik_jwt_authentication.handler.authentication_success');
+        $decoded = json_decode($request->getContent());
+        $taguid = $decoded->taguid;
+        $type = $decoded->login_type;
+
+        if($type !== "NFC_LOGIN"){
+            return $this->json(["success"=>"false","message"=>"Undefined login"],400);
+        }
+
+        $ck_user=$this->em->getRepository(User::class)->findOneBy(["tagUid"=>$taguid]);
+        if($ck_user){
+            return $this->json(["success"=>"false","message"=>"Invalid user"],400);
+        }
+  
+            // ...
+        
+        $auth = $this->authHandler->handleAuthenticationSuccess($ck_user);
+
+        //$token = $this->jwtManager->create($user);
+        $authContent = json_decode($auth->getContent());
+  
+        return $this->json(['success'=>true,
+        'message' => 'Enregistré avec succès',
+        'sub'=>$ck_user->getId(),
+        'username'=>$ck_user->getUsername(),
+    'fullname' => $ck_user->getFullname(),
+    'phone' => $ck_user->getPhone(),
+    'isActive' => $ck_user->isIsActive(),
+    'address' => $ck_user->getAddress(),
+        //'token'=>$token
+        "token"=>$authContent->token,
+        "refresh_token"=>$authContent->refresh_token,
+        
+    ]);
+    }
+    
+
     #[Route(path:"/mail",name:"app_mailer", methods:"POST")]
     public function sendMail(Request $request):Response
     {
