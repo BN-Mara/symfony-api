@@ -24,7 +24,6 @@ final class NotificationAdmin extends AbstractAdmin{
         
     }
 
-
     protected function configureFormFields(FormMapper $form): void
     {
        

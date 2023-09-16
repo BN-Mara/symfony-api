@@ -52,6 +52,10 @@ services:
         class: App\Admin\RouteAdmin
         tags:
             - { name: sonata.admin, model_class: App\Entity\Route, manager_type: orm, label: routes, group: Vehicles }
+    admin.places:
+        class: App\Admin\PlaceAdmin
+        tags:
+            - { name: sonata.admin, model_class: App\Entity\Place, manager_type: orm, label: Places, group: Vehicles }
     
     #admin.notification:
         #class: App\Admin\NotificationAdmin
