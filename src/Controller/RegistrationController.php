@@ -97,7 +97,7 @@ class RegistrationController extends AbstractController
         }
 
         $ck_user=$this->em->getRepository(User::class)->findOneBy(["tagUid"=>$taguid]);
-        if($ck_user){
+        if(!$ck_user){
             return $this->json(["success"=>"false","message"=>"Invalid user"],400);
         }
   
