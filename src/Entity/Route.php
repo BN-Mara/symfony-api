@@ -11,9 +11,12 @@ use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Put;
 use ApiPlatform\Metadata\GetCollection;
 use App\State\RouteStateProcessor;
+use ApiPlatform\Metadata\ApiFilter;
+use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
 
 #[ORM\Entity(repositoryClass: RouteRepository::class)]
 #[ApiResource(operations:[new Get(), new Post(), new Put(processor: RouteStateProcessor::class),new GetCollection()])]
+#[ApiFilter(SearchFilter::class,properties:['isActive'=>'exact', 'vehicle'=>'exact','conveyor'=>'exact'])]
 class Route
 {
     #[ORM\Id]

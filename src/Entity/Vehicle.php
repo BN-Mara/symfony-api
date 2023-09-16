@@ -11,9 +11,12 @@ use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Put;
 use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\ApiFilter;
+use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
 
 #[ORM\Entity(repositoryClass: VehicleRepository::class)]
 #[ApiResource(operations:[new Get(), new Post(), new Put(),new GetCollection()])]
+#[ApiFilter(SearchFilter::class,properties:['deviceID'=>'exact'])]
 class Vehicle
 {
     #[ORM\Id]
