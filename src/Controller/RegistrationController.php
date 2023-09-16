@@ -97,11 +97,8 @@ class RegistrationController extends AbstractController
         }
 
         $ck_user=$this->em->getRepository(User::class)->findOneBy(["tagUid"=>$taguid]);
-        if(!$ck_user){
-            return $this->json(["success"=>"false","message"=>"Invalid user"],400);
-        }
-  
-            // ...
+        if($ck_user){
+                // ...
         
         $auth = $this->authHandler->handleAuthenticationSuccess($ck_user);
 
@@ -121,6 +118,12 @@ class RegistrationController extends AbstractController
         "refresh_token"=>$authContent->refresh_token,
         
     ]);
+            
+        }else{
+            return $this->json(["success"=>"false","message"=>"Invalid user"],400);
+        }
+  
+        
     }
     
 
