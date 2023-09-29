@@ -16,7 +16,7 @@ use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
 
 #[ORM\Entity(repositoryClass: RouteRepository::class)]
 #[ApiResource(operations:[new Get(), new Post(), new Put(processor: RouteStateProcessor::class),new GetCollection()])]
-#[ApiFilter(SearchFilter::class,properties:['isActive'=>'exact', 'vehicle'=>'exact','conveyor'=>'exact'])]
+#[ApiFilter(SearchFilter::class,properties:['isActive'=>'exact', 'vehicle'=>'exact','conveyor'=>'exact', 'status'=>'exact'])]
 class Route
 {
     #[ORM\Id]
@@ -67,6 +67,12 @@ class Route
     #[ORM\ManyToOne(inversedBy: 'routes')]
     #[ORM\JoinColumn(nullable: false)]
     private ?User $conveyor = null;
+
+    #[ORM\Column(length: 10, nullable: true)]
+    private ?string $status = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?int $driverPassengers = null;
     public function __construct()
     {
         //$this->cretedAt = new \DateTime('now',new \DateTimeZone('Africa/Kinshasa'));
@@ -245,6 +251,30 @@ class Route
     public function setConveyor(?User $conveyor): self
     {
         $this->conveyor = $conveyor;
+
+        return $this;
+    }
+
+    public function getStatus(): ?string
+    {
+        return $this->status;
+    }
+
+    public function setStatus(?string $status): self
+    {
+        $this->status = $status;
+
+        return $this;
+    }
+
+    public function getDriverPassengers(): ?int
+    {
+        return $this->driverPassengers;
+    }
+
+    public function setDriverPassengers(?int $driverPassengers): self
+    {
+        $this->driverPassengers = $driverPassengers;
 
         return $this;
     }
