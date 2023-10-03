@@ -56,6 +56,14 @@ services:
         class: App\Admin\PlaceAdmin
         tags:
             - { name: sonata.admin, model_class: App\Entity\Place, manager_type: orm, label: Places, group: Vehicles }
+    admin.cards:
+        class: App\Admin\CardAdmin
+        tags:
+            - { name: sonata.admin, model_class: App\Entity\NfcCard, manager_type: orm, label: Cartes, group: Transactions }
+    admin.transactions:
+        class: App\Admin\TransactionAdmin
+        tags:
+            - { name: sonata.admin, model_class: App\Entity\Transaction, manager_type: orm, label: Transactions, group: Transactions }
     
     #admin.notification:
         #class: App\Admin\NotificationAdmin
