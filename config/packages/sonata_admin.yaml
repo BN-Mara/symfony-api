@@ -1,5 +1,5 @@
 sonata_admin:
-    title: 'Telpo'
+    title: 'TransCar'
     dashboard:
         blocks:
             -
@@ -50,7 +50,7 @@ sonata_admin:
                         roles: { value: "ROLE_CONVEYOR" } 
                         #prime: { value: 1}
     
-    #title_logo: images/logo_title.png 
+    title_logo: images/logo_title.png 
 
 sonata_block:
     blocks:

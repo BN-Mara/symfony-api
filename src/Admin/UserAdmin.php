@@ -19,6 +19,7 @@ use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
+use Symfony\Component\Form\CallbackTransformer;
 
 final class UserAdmin extends AbstractAdmin{
 
@@ -40,16 +41,26 @@ final class UserAdmin extends AbstractAdmin{
             'required' => true,
             'multiple' => false,
             'expanded' => false,
-           
-                'choices'  => [
-                    'ROLE_USER' => 'ROLE_USER',
-                    'ROLE_CONVEYOR'     => 'ROLE_CONVEYOR',
-                    'ROLE_ADMIN'    => 'ROLE_ADMIN',
-                    'ROLE_SUPER_ADMIN'    => 'ROLE_SUPER_ADMIN',
-                ],
+            'choices'  => [
+                'User' => 'ROLE_USER',
+                'Convoyeur' => 'ROLE_CONVEYOR',
+                'Chauffeur' => 'ROLE_DRIVER'
+            ],
         
         ]);
         $form->add('tagUid', TextType::class);
+        $form->get('roles')->addModelTransformer(new CallbackTransformer(
+            function ($rolesArray) {
+                 // transform the array to a string
+                 die(var_dump($rolesArray));
+                 return count(array($rolesArray))? $rolesArray[0]: null;
+            },
+            function ($rolesString) {
+                 // transform the string back to an array
+                 return [$rolesString];
+            }
+    ));
+
         
     }
 
