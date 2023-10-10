@@ -37,29 +37,33 @@ final class UserAdmin extends AbstractAdmin{
         $form->add('isActive',CheckboxType::class);
         $form->add('username', TextType::class);
         $form->add('password', PasswordType::class);
-        $form->add('roles',ChoiceType::class,[
+        $form->add('roles',CollectionType::class,[
             'required' => true,
-            'multiple' => false,
-            'expanded' => false,
-            'choices'  => [
-                'User' => 'ROLE_USER',
-                'Convoyeur' => 'ROLE_CONVEYOR',
-                'Chauffeur' => 'ROLE_DRIVER'
+            'entry_type' => ChoiceType::class,
+            'entry_options'  => [
+                'choices'  => [
+                    'User' => 'ROLE_USER',
+                    'Convoyeur' => 'ROLE_CONVEYOR',
+                    'Chauffeur' => 'ROLE_DRIVER'
+                ]
             ],
         
+        ])
+        ;
+        $form->add('tagUid', TextType::class,[
+            'required'=>false
         ]);
-        $form->add('tagUid', TextType::class);
-        $form->get('roles')->addModelTransformer(new CallbackTransformer(
+       /*$form->get('roles')->addModelTransformer(new CallbackTransformer(
             function ($rolesArray) {
                  // transform the array to a string
-                 die(var_dump($rolesArray));
-                 return count(array($rolesArray))? $rolesArray[0]: null;
+                 //die(var_dump($rolesArray));
+                 return count($rolesArray)? $rolesArray[0]: null;
             },
             function ($rolesString) {
                  // transform the string back to an array
                  return [$rolesString];
             }
-    ));
+    ));*/
 
         
     }
@@ -97,21 +101,17 @@ final class UserAdmin extends AbstractAdmin{
         $show->add('isActive');
         $show->add('roles');
         $show->add('tagUid');
-
-        
         
     }
     public function prePersist(object $user): void
     {
-        $hashedPassword = $this->passwordHasher->hashPassword(
+       $hashedPassword = $this->passwordHasher->hashPassword(
             $user,
             $user->getPassword()
         );
-
         $user->setPassword($hashedPassword);
 
-
-        
+  
     }
 
     public function preUpdate(object $user): void
