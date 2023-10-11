@@ -42,6 +42,9 @@ class Vehicle
     #[ORM\Column(length: 64, nullable: true)]
     private ?string $deviceID = null;
 
+    #[ORM\ManyToOne(inversedBy: 'vehicles')]
+    private ?Region $region = null;
+
     public function __construct()
     {
         $this->routes = new ArrayCollection();
@@ -138,6 +141,18 @@ class Vehicle
     public function setDeviceID(?string $deviceID): self
     {
         $this->deviceID = $deviceID;
+
+        return $this;
+    }
+
+    public function getRegion(): ?Region
+    {
+        return $this->region;
+    }
+
+    public function setRegion(?Region $region): self
+    {
+        $this->region = $region;
 
         return $this;
     }

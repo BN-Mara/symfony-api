@@ -55,11 +55,15 @@ services:
     admin.places:
         class: App\Admin\PlaceAdmin
         tags:
-            - { name: sonata.admin, model_class: App\Entity\Place, manager_type: orm, label: Places, group: Vehicles }
+            - { name: sonata.admin, model_class: App\Entity\Place, manager_type: orm, label: Places, group: Places, icon: "<i class=\"fa fa-pin\"></i>"}
+    admin.regions:
+        class: App\Admin\RegionAdmin
+        tags:
+            - { name: sonata.admin, model_class: App\Entity\Region, manager_type: orm, label: Regions, group: Places }
     admin.cards:
         class: App\Admin\CardAdmin
         tags:
-            - { name: sonata.admin, model_class: App\Entity\NfcCard, manager_type: orm, label: Cartes, group: Transactions }
+            - { name: sonata.admin, model_class: App\Entity\NfcCard, manager_type: orm, label: Cartes, group: Transactions, icon: "<i class=\"fa fa-money\"></i>" }
     admin.transactions:
         class: App\Admin\TransactionAdmin
         tags:

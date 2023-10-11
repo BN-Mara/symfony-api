@@ -28,6 +28,9 @@ class Place
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     private ?\DateTimeInterface $createdAt = null;
 
+    #[ORM\ManyToOne(inversedBy: 'places')]
+    private ?Region $region = null;
+
     public function __construct()
     {
         $this->createdAt = new \DateTime('now',new \DateTimeZone('Africa/Kinshasa'));
@@ -83,6 +86,18 @@ class Place
     public function setCreatedAt(?\DateTimeInterface $createdAt): self
     {
         $this->createdAt = $createdAt;
+
+        return $this;
+    }
+
+    public function getRegion(): ?Region
+    {
+        return $this->region;
+    }
+
+    public function setRegion(?Region $region): self
+    {
+        $this->region = $region;
 
         return $this;
     }

@@ -4,6 +4,7 @@ namespace App\Admin;
 
 use App\Entity\Competition;
 use App\Entity\Notification;
+use App\Entity\Region;
 use App\Service\NotificationService;
 use Sonata\AdminBundle\Admin\AbstractAdmin;
 use Sonata\AdminBundle\Datagrid\DatagridMapper;
@@ -28,11 +29,16 @@ final class VehicleAdmin extends AbstractAdmin{
 
     protected function configureFormFields(FormMapper $form): void
     {
-       
+        $form->add('region', EntityType::class,[
+            'class' => Region::class,
+            'choice_label' => 'name',
+            'multiple' => false,
+            'expanded' => false,
+        ]);
         $form->add('name', TextType::class);
         $form->add('matricule', TextType::class);
         $form->add('currentLat', NumberType::class);
-        $form->add('curretLng', NumberType::class);
+        $form->add('currentLng', NumberType::class);
         $form->add('deviceID', TextType::class);
         
     }
@@ -51,6 +57,7 @@ final class VehicleAdmin extends AbstractAdmin{
         $list->addIdentifier('name');
         $list->addIdentifier('matricule');
         $list->addIdentifier('deviceID');
+        $list->addIdentifier('region.name');
         $list->addIdentifier('currentLat');
         $list->addIdentifier('currentLng');
 

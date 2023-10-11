@@ -4,7 +4,6 @@ namespace App\Admin;
 
 use App\Entity\Competition;
 use App\Entity\Notification;
-use App\Entity\Region;
 use App\Service\NotificationService;
 use Sonata\AdminBundle\Admin\AbstractAdmin;
 use Sonata\AdminBundle\Datagrid\DatagridMapper;
@@ -18,10 +17,11 @@ use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 
 
-final class PlaceAdmin extends AbstractAdmin{
+final class RegionAdmin extends AbstractAdmin{
 
     public function __construct(private NotificationService $notifyer)
     {
@@ -30,15 +30,12 @@ final class PlaceAdmin extends AbstractAdmin{
 
     protected function configureFormFields(FormMapper $form): void
     {
-        $form->add('region', EntityType::class,[
-            'class' => Region::class,
-            'choice_label' => 'name',
-            'multiple' => false,
-            'expanded' => false,
-        ]);
+       
         $form->add('name', TextType::class);
-        $form->add('latitude', NumberType::class);
-        $form->add('longitude', NumberType::class);
+        $form->add('shape', TextareaType::class, [
+            'required'=>false
+        ]);
+        
         
         
     }
@@ -46,9 +43,7 @@ final class PlaceAdmin extends AbstractAdmin{
     protected function configureDatagridFilters(DatagridMapper $datagrid): void
     {
         $datagrid->add('name');
-        $datagrid->add('latitude');
-        $datagrid->add('longitude');
-        $datagrid->add('region.name');
+        $datagrid->add('createdAt');
         
         
 
@@ -60,9 +55,8 @@ final class PlaceAdmin extends AbstractAdmin{
         
         
         $list->addIdentifier('name');
-        $list->addIdentifier('region.name');
-        $list->addIdentifier('latitude');
-        $list->addIdentifier('longitude');
+        $list->addIdentifier('createdAt');
+
 
         
     }
@@ -70,10 +64,8 @@ final class PlaceAdmin extends AbstractAdmin{
     protected function configureShowFields(ShowMapper $show): void
     {
         $show->add('name');
-        $show->add('latitude');
-        $show->add('longitude');
         $show->add('createdAt');
-        $show->add('region.name');
+        $show->add('shape');
 
     }
     public function prePersist(object $user): void
