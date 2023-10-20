@@ -20,6 +20,7 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\CallbackTransformer;
+use Symfony\Component\Form\Extension\Core\Type\NumberType;
 
 final class UserAdmin extends AbstractAdmin{
 
@@ -44,7 +45,8 @@ final class UserAdmin extends AbstractAdmin{
                 'choices'  => [
                     'User' => 'ROLE_USER',
                     'Convoyeur' => 'ROLE_CONVEYOR',
-                    'Chauffeur' => 'ROLE_DRIVER'
+                    'Chauffeur' => 'ROLE_DRIVER',
+                    'Rechargeur'=> 'ROLE_RECHARGEUR'
                 ]
             ],
         
@@ -53,6 +55,10 @@ final class UserAdmin extends AbstractAdmin{
         $form->add('tagUid', TextType::class,[
             'required'=>false
         ]);
+        $form->add('balance', NumberType::class,[
+            'required'=>false
+        ]);
+        
        /*$form->get('roles')->addModelTransformer(new CallbackTransformer(
             function ($rolesArray) {
                  // transform the array to a string
@@ -88,6 +94,8 @@ final class UserAdmin extends AbstractAdmin{
         $list->addIdentifier('roles');
         $list->addIdentifier('isActive');
         $list->addIdentifier('tagUid');
+        $list->addIdentifier('balance');
+        
 
         
     }
@@ -101,6 +109,7 @@ final class UserAdmin extends AbstractAdmin{
         $show->add('isActive');
         $show->add('roles');
         $show->add('tagUid');
+
         
     }
     public function prePersist(object $user): void

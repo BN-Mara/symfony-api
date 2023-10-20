@@ -68,9 +68,12 @@ services:
         class: App\Admin\TransactionAdmin
         tags:
             - { name: sonata.admin, model_class: App\Entity\Transaction, manager_type: orm, label: Transactions, group: Transactions }
-    
     #admin.notification:
         #class: App\Admin\NotificationAdmin
         #tags:
         #    - { name: sonata.admin, model_class: App\Entity\Notification, manager_type: orm, label: Notification }
+    app.menu_listener:
+        class: App\EventListener\MenuBuilderListener
+        tags:
+            - { name: kernel.event_listener, event: sonata.admin.event.configure.menu.sidebar, method: addMenuItems }
     Symfony\Component\Dotenv\Command\DotenvDumpCommand: ~

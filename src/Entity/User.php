@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -49,10 +50,24 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 25, nullable: true)]
     private ?string $tagUid = null;
 
+    #[ORM\Column(nullable: true)]
+    private ?float $balance = null;
+
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
+    private ?\DateTimeInterface $updatedAt = null;
+
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: RechargeUser::class)]
+    private Collection $rechargeUsers;
+
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: Logins::class)]
+    private Collection $logins;
+
 
     public function __construct()
     {
         $this->routes = new ArrayCollection();
+        $this->rechargeUsers = new ArrayCollection();
+        $this->logins = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -211,6 +226,90 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setTagUid(?string $tagUid): self
     {
         $this->tagUid = $tagUid;
+
+        return $this;
+    }
+
+    public function getBalance(): ?float
+    {
+        return $this->balance;
+    }
+
+    public function setBalance(?float $balance): self
+    {
+        $this->balance = $balance;
+
+        return $this;
+    }
+
+    public function getUpdatedAt(): ?\DateTimeInterface
+    {
+        return $this->updatedAt;
+    }
+
+    public function setUpdatedAt(?\DateTimeInterface $updatedAt): self
+    {
+        $this->updatedAt = $updatedAt;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, RechargeUser>
+     */
+    public function getRechargeUsers(): Collection
+    {
+        return $this->rechargeUsers;
+    }
+
+    public function addRechargeUser(RechargeUser $rechargeUser): self
+    {
+        if (!$this->rechargeUsers->contains($rechargeUser)) {
+            $this->rechargeUsers->add($rechargeUser);
+            $rechargeUser->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeRechargeUser(RechargeUser $rechargeUser): self
+    {
+        if ($this->rechargeUsers->removeElement($rechargeUser)) {
+            // set the owning side to null (unless already changed)
+            if ($rechargeUser->getUser() === $this) {
+                $rechargeUser->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Logins>
+     */
+    public function getLogins(): Collection
+    {
+        return $this->logins;
+    }
+
+    public function addLogin(Logins $login): self
+    {
+        if (!$this->logins->contains($login)) {
+            $this->logins->add($login);
+            $login->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeLogin(Logins $login): self
+    {
+        if ($this->logins->removeElement($login)) {
+            // set the owning side to null (unless already changed)
+            if ($login->getUser() === $this) {
+                $login->setUser(null);
+            }
+        }
 
         return $this;
     }
