@@ -4,6 +4,8 @@ namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
 use App\Repository\RouteRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Metadata\Get;
@@ -73,11 +75,15 @@ class Route
 
     #[ORM\Column(nullable: true)]
     private ?int $driverPassengers = null;
+
+    #[ORM\OneToMany(mappedBy: 'route', targetEntity: Transaction::class)]
+    private Collection $yes;
     public function __construct()
     {
         //$this->cretedAt = new \DateTime('now',new \DateTimeZone('Africa/Kinshasa'));
 
         $this->startingTime = new \DateTime('now',new \DateTimeZone('Africa/Kinshasa'));
+        $this->yes = new ArrayCollection();
         
     }
 
@@ -275,6 +281,36 @@ class Route
     public function setDriverPassengers(?int $driverPassengers): self
     {
         $this->driverPassengers = $driverPassengers;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Transaction>
+     */
+    public function getYes(): Collection
+    {
+        return $this->yes;
+    }
+
+    public function addYe(Transaction $ye): self
+    {
+        if (!$this->yes->contains($ye)) {
+            $this->yes->add($ye);
+            $ye->setRoute($this);
+        }
+
+        return $this;
+    }
+
+    public function removeYe(Transaction $ye): self
+    {
+        if ($this->yes->removeElement($ye)) {
+            // set the owning side to null (unless already changed)
+            if ($ye->getRoute() === $this) {
+                $ye->setRoute(null);
+            }
+        }
 
         return $this;
     }

@@ -16,6 +16,7 @@ use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 
@@ -37,9 +38,17 @@ final class VehicleAdmin extends AbstractAdmin{
         ]);
         $form->add('name', TextType::class);
         $form->add('matricule', TextType::class);
-        $form->add('currentLat', NumberType::class);
-        $form->add('currentLng', NumberType::class);
+        $form->add('currentLat', NumberType::class,[
+            'required' => false
+        ]);
+        $form->add('currentLng', NumberType::class,[
+            'required' => false
+        ]);
         $form->add('deviceID', TextType::class);
+        $form->add('file', FileType::class,[
+            'required' => false,
+            'label'=>'Volet jaune'
+        ]);
         
     }
 
@@ -73,14 +82,23 @@ final class VehicleAdmin extends AbstractAdmin{
         $show->add('currentLng');
         
     }
-    public function prePersist(object $user): void
+    public function prePersist(object $vehicle): void
     {
+        $vehicle->setVoletJaune("/");
+        $this->manageFileUpload($vehicle);
         
     }
 
-    public function preUpdate(object $user): void
+    public function preUpdate(object $vehicle): void
     {
-      
+        $vehicle->setVoletJaune("/");
+        $this->manageFileUpload($vehicle);
+    }
+    private function manageFileUpload(object $vehicle): void
+    {
+        if ($vehicle->getFile()) {
+            $vehicle->refreshUpdated();
+        }
     }
 
 }

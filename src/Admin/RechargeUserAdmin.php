@@ -6,6 +6,7 @@ use App\Entity\Competition;
 use App\Entity\Notification;
 use App\Entity\User;
 use App\Service\NotificationService;
+use Doctrine\ORM\EntityManagerInterface;
 use Sonata\AdminBundle\Admin\AbstractAdmin;
 use Sonata\AdminBundle\Datagrid\DatagridMapper;
 use Sonata\AdminBundle\Datagrid\ListMapper;
@@ -20,13 +21,14 @@ use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Security\Csrf\TokenStorage\TokenStorageInterface;
 
 
-final class TicketPriceAdmin extends AbstractAdmin{
-
-    public function __construct(private NotificationService $notifyer)
+final class RechargeUserAdmin extends AbstractAdmin{
+    private $ts;
+    public function __construct( $ts, private NotificationService $notifyer, private EntityManagerInterface $em)
     {
-        
+        $this->ts = $ts;
     }
 
     protected function configureFormFields(FormMapper $form): void
@@ -47,10 +49,10 @@ final class TicketPriceAdmin extends AbstractAdmin{
         $datagrid->add('user.username');
         $datagrid->add('amount');
         $datagrid->add('createdAt');
-        $datagrid->add('updatedAt');
-        
-        
+        $datagrid->add('createdBy');
 
+        
+        
     
     }
 
@@ -58,30 +60,47 @@ final class TicketPriceAdmin extends AbstractAdmin{
     {
         
         
-        $list->addIdentifier('price');
-        $list->addIdentifier('description');
+        $list->addIdentifier('user.username');
+        $list->addIdentifier('amount');
         $list->addIdentifier('createdAt');
-        $list->addIdentifier('updatedAt');
+        $list->add('createdBy');
+
         
     }
 
     protected function configureShowFields(ShowMapper $show): void
     {
 
-        $show->add('price');
-        $show->add('description');
+        $show->add('user.username');
+        $show->add('amount');
         $show->add('createdAt');
-        $show->add('updatedAt');
+        $show->add('createdBy');
 
     }
-    public function prePersist(object $ticket): void
+    public function prePersist(object $recharge): void
     {
+        //$user = $this->em->getRepository(User::class)->findBy(["username"])
+        $user = $recharge->getUser();
+        $me = $this->ts->getToken()->getUser();;
+        $recharge->setCreatedBy($me->getUsername());
+        if($user->getBalance() != null){
+            $user->setBalance($recharge->getAmount());
+        }else{
+            $user->setBalance($user->getBalance() + $recharge->getAmount());
+        }
+            
+            $user->setUpdatedAt(new \DateTime('now',new \DateTimeZone('Africa/Kinshasa')));
+            $this->em->flush();
+
+        
+        
         
     }
 
-    public function preUpdate(object $ticket): void
+    public function preUpdate(object $recharge): void
     {
-        $ticket->setUpdatedAt(new \DateTime('now',new \DateTimeZone('Africa/Kinshasa')));
+        //$ticket->setUpdatedAt(new \DateTime('now',new \DateTimeZone('Africa/Kinshasa')));
+        return ;
 
 
       

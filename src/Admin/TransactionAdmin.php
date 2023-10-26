@@ -8,6 +8,7 @@ use App\Service\NotificationService;
 use Sonata\AdminBundle\Admin\AbstractAdmin;
 use Sonata\AdminBundle\Datagrid\DatagridMapper;
 use Sonata\AdminBundle\Datagrid\ListMapper;
+use Sonata\AdminBundle\Datagrid\ProxyQueryInterface;
 use Sonata\AdminBundle\Form\FormMapper;
 use Sonata\AdminBundle\Show\ShowMapper;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -36,6 +37,7 @@ final class TransactionAdmin extends AbstractAdmin{
 
     protected function configureDatagridFilters(DatagridMapper $datagrid): void
     {
+
         $datagrid->add('amount');
         $datagrid->add('card.uid');
         $datagrid->add('createdAt');
@@ -49,9 +51,10 @@ final class TransactionAdmin extends AbstractAdmin{
         
         
         $list->addIdentifier('card.uid');
+
         $list->addIdentifier('amount');
         $list->addIdentifier('createdAt');
-        $list->addIdentifier('routeId');
+        $list->addIdentifier('route.vehicle.name');
 
         
     }
@@ -61,7 +64,7 @@ final class TransactionAdmin extends AbstractAdmin{
         $show->add('card.uid');
         $show->add('card.cardHolder');
         $show->add('amount');
-        $show->add('routeId');
+        $show->add('route.vehicle.name');
         $show->add('createdAt');
 
     }

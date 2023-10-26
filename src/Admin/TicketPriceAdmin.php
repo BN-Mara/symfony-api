@@ -22,10 +22,11 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 
 
 final class TicketPriceAdmin extends AbstractAdmin{
+    private $ts;
 
-    public function __construct(private NotificationService $notifyer)
+    public function __construct($ts,private NotificationService $notifyer)
     {
-        
+        $this->ts = $ts;
     }
 
     protected function configureFormFields(FormMapper $form): void
@@ -70,11 +71,14 @@ final class TicketPriceAdmin extends AbstractAdmin{
     }
     public function prePersist(object $ticket): void
     {
-        
+        $me = $this->ts->getToken()->getUser();;
+        $ticket->setCreatedBy($me->getUsername());
     }
 
     public function preUpdate(object $ticket): void
     {
+        $me = $this->ts->getToken()->getUser();;
+        $ticket->setCreatedBy($me->getUsername());
         $ticket->setUpdatedAt(new \DateTime('now',new \DateTimeZone('Africa/Kinshasa')));
 
 

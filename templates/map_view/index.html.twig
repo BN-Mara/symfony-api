@@ -1,4 +1,12 @@
 {% extends '@SonataAdmin/standard_layout.html.twig' %}
+  {% block header %}
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
+    <link
+      href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet"
+    />
+
+  {% endblock %}
     {% block top_bar_after_nav %} 
         <li>
             <a href="{{ path('acme_demo_hello_index', {'name': 'World'}) }}">
@@ -15,6 +23,7 @@
     <div id="map" style="width:100%;height:1000px;"></div>
 
     <script>
+      
     function myMap() {
     
     var map = new google.maps.Map(document.getElementById("map"), mapOptions);
@@ -27,7 +36,7 @@
     type: "poly",
   };
   const image = {
-    url: "https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png",
+    url: "https://maps.google.com/mapfiles/ms/icons/blue-dot.png",
     // This marker is 20 pixels wide by 32 pixels high.
     size: new google.maps.Size(20, 32),
     // The origin for this image is (0, 0).
@@ -35,6 +44,7 @@
     // The anchor for this image is the base of the flagpole at (0, 32).
     anchor: new google.maps.Point(0, 32),
   };
+  
   var vehs = JSON.parse('{{ data | json_encode | raw }}');
   
   
@@ -50,6 +60,9 @@ var infoFn = function (count) {
                     '<table class="table table-striped"><tr><td><span>Location:</span> </td><td><span>' + vehs[count].lat+','+vehs[count].lng + '</span></td></tr>' +
                     '<tr><td><span> vehcle: </span> </td><td><span>' + vehs[count].name + '</span></td></tr>' +
                     '<tr><td><span>, id: </span> </td><td><span>' + vehs[count].id + '</span></td></tr>' +
+                    '<tr><td><span>, Total: </span> </td><td><span>' + vehs[count].total + '</span></td></tr>' +
+                    '<tr><td><span>, Driver: </span> </td><td><span>' + vehs[count].driver + '</span></td></tr>' +
+                    '<tr><td><span>, Loging at: </span> </td><td><span>' + vehs[count].startingAt + '</span></td></tr>' +
                     '</table></div>';
 
                 infowindow.setContent(content);
@@ -64,7 +77,13 @@ var infoFn = function (count) {
   const marker = new google.maps.Marker({
     position: new google.maps.LatLng(vehs[i].lat, vehs[i].lng),
     map,
-    icon: image,
+    icon: {
+      path: "M-1.547 12l6.563-6.609-1.406-1.406-5.156 5.203-2.063-2.109-1.406 1.406zM0 0q2.906 0 4.945 2.039t2.039 4.945q0 1.453-0.727 3.328t-1.758 3.516-2.039 3.070-1.711 2.273l-0.75 0.797q-0.281-0.328-0.75-0.867t-1.688-2.156-2.133-3.141-1.664-3.445-0.75-3.375q0-2.906 2.039-4.945t4.945-2.039z",
+      fillColor: vehs[i].color,
+      scale: 2,
+      fillOpacity: 1,
+    },
+    
     shape: shape,
     title: vehs[i].name,
     zIndex: vehs[i].id,

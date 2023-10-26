@@ -6,6 +6,7 @@ use ApiPlatform\Metadata\ApiResource;
 use App\Repository\VehicleRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\Post;
@@ -13,6 +14,7 @@ use ApiPlatform\Metadata\Put;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 #[ORM\Entity(repositoryClass: VehicleRepository::class)]
 #[ApiResource(operations:[new Get(), new Post(), new Put(),new GetCollection()])]
@@ -45,9 +47,25 @@ class Vehicle
     #[ORM\ManyToOne(inversedBy: 'vehicles')]
     private ?Region $region = null;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $voletJaune = null;
+
+    #[ORM\OneToMany(mappedBy: 'vehicle', targetEntity: User::class)]
+    private Collection $users;
+
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
+    private ?\DateTimeInterface $updatedAt = null;
+
+    const SERVER_PATH_TO_IMAGE_FOLDER = 'images/vehicles';
+    /**
+     * Unmapped property to handle file uploads
+     */
+    private ?UploadedFile $file = null;
+
     public function __construct()
     {
         $this->routes = new ArrayCollection();
+        $this->users = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -156,4 +174,113 @@ class Vehicle
 
         return $this;
     }
+
+    public function getVoletJaune(): ?string
+    {
+        return $this->voletJaune;
+    }
+
+    public function setVoletJaune(?string $voletJaune): self
+    {
+        $this->voletJaune = $voletJaune;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, User>
+     */
+    public function getUsers(): Collection
+    {
+        return $this->users;
+    }
+
+    public function addUser(User $user): self
+    {
+        if (!$this->users->contains($user)) {
+            $this->users->add($user);
+            $user->setVehicle($this);
+        }
+
+        return $this;
+    }
+
+    public function removeUser(User $user): self
+    {
+        if ($this->users->removeElement($user)) {
+            // set the owning side to null (unless already changed)
+            if ($user->getVehicle() === $this) {
+                $user->setVehicle(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getUpdatedAt(): ?\DateTimeInterface
+    {
+        return $this->updatedAt;
+    }
+
+    public function setUpdatedAt(?\DateTimeInterface $updatedAt): self
+    {
+        $this->updatedAt = $updatedAt;
+
+        return $this;
+    }
+    public function setFile(?UploadedFile $file = null): void
+    {
+        $this->file = $file;
+    }
+
+    public function getFile(): ?UploadedFile
+    {
+        return $this->file;
+    }
+
+    /**
+     * Manages the copying of the file to the relevant place on the server
+     */
+    public function upload(): void
+    {
+        // the file property can be empty if the field is not required
+        if (null === $this->getFile()) {
+            return;
+        }
+
+       // we use the original file name here but you should
+       // sanitize it at least to avoid any security issues
+
+       // move takes the target directory and target filename as params
+       $fname = $this->name.''.$this->matricule.'.jpg';
+       //die(var_dump(dirname(__DIR__).self::SERVER_PATH_TO_IMAGE_FOLDER));
+       $this->getFile()->move(
+        self::SERVER_PATH_TO_IMAGE_FOLDER,
+           $fname
+       );
+
+       // set the path property to the filename where you've saved the file
+       $this->voletJaune = $fname;
+
+       // clean up the file property as you won't need it anymore
+       $this->setFile(null);
+   }
+
+   /**
+    * Lifecycle callback to upload the file to the server.
+    */
+   public function lifecycleFileUpload(): void
+   {
+       $this->upload();
+   }
+
+   /**
+    * Updates the hash value to force the preUpdate and postUpdate events to fire.
+    */
+   public function refreshUpdated(): void
+   {
+      $this->setUpdatedAt(new \DateTime());
+      $this->lifecycleFileUpload();
+   }
+
 }

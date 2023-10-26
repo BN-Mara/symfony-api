@@ -4,6 +4,7 @@ namespace App\Admin;
 
 use App\Entity\Competition;
 use App\Entity\Notification;
+use App\Entity\Vehicle;
 use App\Service\NotificationService;
 use Sonata\AdminBundle\Admin\AbstractAdmin;
 use Sonata\AdminBundle\Datagrid\DatagridMapper;
@@ -20,6 +21,7 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\CallbackTransformer;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 
 final class UserAdmin extends AbstractAdmin{
@@ -37,7 +39,17 @@ final class UserAdmin extends AbstractAdmin{
         $form->add('address', TextType::class);
         $form->add('isActive',CheckboxType::class);
         $form->add('username', TextType::class);
-        $form->add('password', PasswordType::class);
+        if ($this->isCurrentRoute('create')) {
+            // CREATE
+            $form->add('password', PasswordType::class,);
+        }else{
+            $form->add('plainPassword', PasswordType::class, [
+                'required'=>false,
+                'label' => 'New password (empty filed means no changes)',
+            ]);
+        }
+        
+        
         $form->add('roles',CollectionType::class,[
             'required' => true,
             'entry_type' => ChoiceType::class,
@@ -55,8 +67,23 @@ final class UserAdmin extends AbstractAdmin{
         $form->add('tagUid', TextType::class,[
             'required'=>false
         ]);
-        $form->add('balance', NumberType::class,[
+        $form->add('vehicle', EntityType::class,[
+            'required'=>false,
+            'class' => Vehicle::class,
+            'choice_label' => 'matricule',
+            'multiple' => false,
+            'expanded' => false,
+        ]);
+        /*$form->add('balance', NumberType::class,[
             'required'=>false
+        ]);*/
+        $form->add('image', FileType::class,[
+            'required' => false,
+            'label'=>'Photo'
+        ]);
+        $form->add('card', FileType::class,[
+            'required' => false,
+            'label'=>'Identity card'
         ]);
         
        /*$form->get('roles')->addModelTransformer(new CallbackTransformer(
@@ -118,14 +145,37 @@ final class UserAdmin extends AbstractAdmin{
             $user,
             $user->getPassword()
         );
+        
         $user->setPassword($hashedPassword);
+        $user->setPhoto("/");
+        $user->setIdentityCard("/");
+        $this->manageFileUpload($user);
 
-  
     }
 
     public function preUpdate(object $user): void
     {
+        if($user->getPlainPassword() !== null){
+
+        
+        $hashedPassword = $this->passwordHasher->hashPassword(
+            $user,
+            $user->getPlainPassword()
+        );
+        $user->setPassword($hashedPassword);
+        }
+        
+        
+        //$user->setPhoto("/");
+        //$user->setIdentityCard("/");
+        $this->manageFileUpload($user);
        
+    }
+    private function manageFileUpload(object $vehicle): void
+    {
+        if ($vehicle->getImage() || $vehicle->getCard()) {
+            $vehicle->refreshUpdated();
+        }
     }
 
 }

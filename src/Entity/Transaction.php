@@ -22,11 +22,11 @@ class Transaction
     #[ORM\Column]
     private ?float $amount = null;
 
-    #[ORM\Column(nullable: true)]
-    private ?int $routeId = null;
-
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     private ?\DateTimeInterface $createdAt = null;
+
+    #[ORM\ManyToOne(inversedBy: 'yes')]
+    private ?Route $route = null;
     public function __construct()
     {
        
@@ -61,19 +61,6 @@ class Transaction
 
         return $this;
     }
-
-    public function getRouteId(): ?int
-    {
-        return $this->routeId;
-    }
-
-    public function setRouteId(?int $routeId): self
-    {
-        $this->routeId = $routeId;
-
-        return $this;
-    }
-
     public function getCreatedAt(): ?\DateTimeInterface
     {
         return $this->createdAt;
@@ -82,6 +69,18 @@ class Transaction
     public function setCreatedAt(?\DateTimeInterface $createdAt): self
     {
         $this->createdAt = $createdAt;
+
+        return $this;
+    }
+
+    public function getRoute(): ?Route
+    {
+        return $this->route;
+    }
+
+    public function setRoute(?Route $route): self
+    {
+        $this->route = $route;
 
         return $this;
     }

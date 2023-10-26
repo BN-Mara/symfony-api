@@ -10,6 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use ApiPlatform\Metadata\ApiResource;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ApiResource]
@@ -61,6 +62,30 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: Logins::class)]
     private Collection $logins;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $photo = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $identityCard = null;
+
+    #[ORM\ManyToOne(inversedBy: 'users')]
+    private ?Vehicle $vehicle = null;
+
+    const SERVER_PATH_TO_IMAGE_FOLDER = 'images/users';
+    /**
+     * Unmapped property to handle file uploads
+     */
+    private ?UploadedFile $image = null;
+    /**
+     * Unmapped property to handle file uploads
+     */
+    private ?UploadedFile $card = null;
+    /**
+     * Unmapped property to handle password
+     */
+    private ?string $plainPassword = null;
+
 
 
     public function __construct()
@@ -313,5 +338,130 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
         return $this;
     }
+
+    public function getPhoto(): ?string
+    {
+        return $this->photo;
+    }
+
+    public function setPhoto(?string $photo): self
+    {
+        $this->photo = $photo;
+
+        return $this;
+    }
+
+    public function getIdentityCard(): ?string
+    {
+        return $this->identityCard;
+    }
+
+    public function setIdentityCard(?string $identityCard): self
+    {
+        $this->identityCard = $identityCard;
+
+        return $this;
+    }
+
+    public function getVehicle(): ?Vehicle
+    {
+        return $this->vehicle;
+    }
+
+    public function setVehicle(?Vehicle $vehicle): self
+    {
+        $this->vehicle = $vehicle;
+
+        return $this;
+    }
+    public function setImage(?UploadedFile $image = null): void
+    {
+        $this->image = $image;
+    }
+
+    public function getImage(): ?UploadedFile
+    {
+        return $this->image;
+    }
+    public function setCard(?UploadedFile $card = null): void
+    {
+        $this->card = $card;
+    }
+
+    public function getCard(): ?UploadedFile
+    {
+        return $this->card;
+    }
+    public function setPlainPassword(?string $plainPassword = null): void
+    {
+        $this->plainPassword = $plainPassword;
+    }
+
+    public function getPlainPassword(): ?string
+    {
+        return $this->plainPassword;
+    }
+
+
+    /**
+     * Manages the copying of the file to the relevant place on the server
+     */
+    public function upload(): void
+    {
+        // the file property can be empty if the field is not required
+        if (null !== $this->getImage()) {
+             // move takes the target directory and target filename as params
+       $fname = $this->username.'_photo_'.$this->id.'.jpg';
+       //die(var_dump(dirname(__DIR__).self::SERVER_PATH_TO_IMAGE_FOLDER));
+       $this->getImage()->move(
+        self::SERVER_PATH_TO_IMAGE_FOLDER,
+           $fname
+       );
+
+       // set the path property to the filename where you've saved the file
+       $this->photo = $fname;
+
+       // clean up the file property as you won't need it anymore
+       $this->setImage(null);
+    }
+    if (null !== $this->getCard()) {
+        // move takes the target directory and target filename as params
+    $fname = $this->username.'_card_'.$this->id.'.jpg';
+    //die(var_dump(dirname(__DIR__).self::SERVER_PATH_TO_IMAGE_FOLDER));
+    $this->getCard()->move(
+    self::SERVER_PATH_TO_IMAGE_FOLDER,
+      $fname
+    );
+
+    // set the path property to the filename where you've saved the file
+    $this->identityCard = $fname;
+
+    // clean up the file property as you won't need it anymore
+    $this->setCard(null);
+    }
+
+       // we use the original file name here but you should
+       // sanitize it at least to avoid any security issues
+
+      
+   }
+
+   /**
+    * Lifecycle callback to upload the file to the server.
+    */
+   public function lifecycleFileUpload(): void
+   {
+       $this->upload();
+   }
+
+   /**
+    * Updates the hash value to force the preUpdate and postUpdate events to fire.
+    */
+   public function refreshUpdated(): void
+   {
+      $this->setUpdatedAt(new \DateTime());
+      $this->lifecycleFileUpload();
+   }
+
 
 }

@@ -2,6 +2,7 @@
 
 namespace App\EventListener;
 
+use App\Entity\Logins;
 use App\Entity\UserData;
 use Doctrine\ORM\EntityManagerInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Event\AuthenticationSuccessEvent;
@@ -25,13 +26,18 @@ public function onAuthenticationSuccessResponse(AuthenticationSuccessEvent $even
         return;
     }
     //$userData = $this->em->getRepository(UserData::class)->findOneBy(['uid'=>"15"]);
-
+    $login = new Logins();
+    $login->setUser($user);
+    $this->em->persist($login);
+    $this->em->flush();
+    
     $data['sub'] = $user->getId();
     $data['username'] = $user->getUsername();
     $data['fullname'] = $user->getFullname();
     $data['phone'] = $user->getPhone();
     $data['isActive'] = $user->isIsActive();
     $data['address'] = $user->getAddress();
+
     $event->setData($data);
 }
 }

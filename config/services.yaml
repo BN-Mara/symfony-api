@@ -55,7 +55,7 @@ services:
     admin.places:
         class: App\Admin\PlaceAdmin
         tags:
-            - { name: sonata.admin, model_class: App\Entity\Place, manager_type: orm, label: Places, group: Places, icon: "<i class=\"fa fa-pin\"></i>"}
+            - { name: sonata.admin, model_class: App\Entity\Place, manager_type: orm, label: Places, group: Places, icon: "<i class=\"fa fa-city\"></i>"}
     admin.regions:
         class: App\Admin\RegionAdmin
         tags:
@@ -68,6 +68,30 @@ services:
         class: App\Admin\TransactionAdmin
         tags:
             - { name: sonata.admin, model_class: App\Entity\Transaction, manager_type: orm, label: Transactions, group: Transactions }
+    
+    admin.rechargeusers:
+        class: App\Admin\RechargeUserAdmin
+        arguments:
+            - '@security.token_storage'
+        tags:
+            - { name: sonata.admin, model_class: App\Entity\RechargeUser, manager_type: orm, label: Recharges, group: Transactions }
+    admin.rechargecartes:
+        class: App\Admin\RechargeCarteAdmin
+       
+        tags:
+            - { name: sonata.admin, model_class: App\Entity\RechargeCarte, manager_type: orm, label: 'Card Recharges', group: Transactions }
+    
+    admin.tickets:
+        class: App\Admin\TicketPriceAdmin
+        arguments:
+            - '@security.token_storage'
+        tags:
+            - { name: sonata.admin, model_class: App\Entity\TicketPrice, manager_type: orm, label: Tickets, group: Vehicles }
+    admin.logins:
+        class: App\Admin\LoginsAdmin
+        tags:
+            - { name: sonata.admin, model_class: App\Entity\Logins, manager_type: orm, label: Logins, group: Vehicles }
+    
     #admin.notification:
         #class: App\Admin\NotificationAdmin
         #tags:

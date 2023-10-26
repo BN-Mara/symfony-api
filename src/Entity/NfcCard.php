@@ -42,10 +42,14 @@ class NfcCard
     #[ORM\Column]
     private ?bool $isActive = null;
 
+    #[ORM\OneToMany(mappedBy: 'card', targetEntity: RechargeCarte::class)]
+    private Collection $rechargeCartes;
+
     public function __construct()
     {
         $this->transactions = new ArrayCollection();
         $this->createdAt = new \DateTime('now',new \DateTimeZone('Africa/Kinshasa'));
+        $this->rechargeCartes = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -163,6 +167,36 @@ class NfcCard
     public function setIsActive(bool $isActive): self
     {
         $this->isActive = $isActive;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, RechargeCarte>
+     */
+    public function getRechargeCartes(): Collection
+    {
+        return $this->rechargeCartes;
+    }
+
+    public function addRechargeCarte(RechargeCarte $rechargeCarte): self
+    {
+        if (!$this->rechargeCartes->contains($rechargeCarte)) {
+            $this->rechargeCartes->add($rechargeCarte);
+            $rechargeCarte->setCard($this);
+        }
+
+        return $this;
+    }
+
+    public function removeRechargeCarte(RechargeCarte $rechargeCarte): self
+    {
+        if ($this->rechargeCartes->removeElement($rechargeCarte)) {
+            // set the owning side to null (unless already changed)
+            if ($rechargeCarte->getCard() === $this) {
+                $rechargeCarte->setCard(null);
+            }
+        }
 
         return $this;
     }

@@ -16,9 +16,6 @@ class RechargeCarte
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 32)]
-    private ?string $uidCarte = null;
-
     #[ORM\Column]
     private ?float $amount = null;
 
@@ -27,6 +24,9 @@ class RechargeCarte
 
     #[ORM\Column(length: 64)]
     private ?string $createdBy = null;
+
+    #[ORM\ManyToOne(inversedBy: 'rechargeCartes')]
+    private ?NfcCard $card = null;
 
     public function __construct()
     {
@@ -38,18 +38,6 @@ class RechargeCarte
     public function getId(): ?int
     {
         return $this->id;
-    }
-
-    public function getUidCarte(): ?string
-    {
-        return $this->uidCarte;
-    }
-
-    public function setUidCarte(string $uidCarte): self
-    {
-        $this->uidCarte = $uidCarte;
-
-        return $this;
     }
 
     public function getAmount(): ?float
@@ -84,6 +72,18 @@ class RechargeCarte
     public function setCreatedBy(string $createdBy): self
     {
         $this->createdBy = $createdBy;
+
+        return $this;
+    }
+
+    public function getCard(): ?NfcCard
+    {
+        return $this->card;
+    }
+
+    public function setCard(?NfcCard $card): self
+    {
+        $this->card = $card;
 
         return $this;
     }
