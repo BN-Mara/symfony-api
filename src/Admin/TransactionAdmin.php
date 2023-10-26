@@ -41,7 +41,8 @@ final class TransactionAdmin extends AbstractAdmin{
         $datagrid->add('amount');
         $datagrid->add('card.uid');
         $datagrid->add('createdAt');
-        
+        $datagrid->add('route.vehicle.name');
+        $datagrid->add('route.vehicle.matricule');
 
     
     }
