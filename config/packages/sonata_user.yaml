@@ -5,7 +5,7 @@ sonata_user:
         email:
             address: sonata@localhost
             sender_name: Sonata Admin
-    #security_acl: true
+    security_acl: true
     admin: # Admin Classes
         user:
             class: Sonata\UserBundle\Admin\Entity\UserAdmin

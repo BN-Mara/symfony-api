@@ -86,6 +86,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     private ?string $plainPassword = null;
 
+    #[ORM\OneToMany(mappedBy: 'driver', targetEntity: KilometerTrack::class)]
+    private Collection $kilometerTracks;
+
 
 
     public function __construct()
@@ -93,6 +96,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->routes = new ArrayCollection();
         $this->rechargeUsers = new ArrayCollection();
         $this->logins = new ArrayCollection();
+        $this->kilometerTracks = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -461,6 +465,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
    {
       $this->setUpdatedAt(new \DateTime());
       $this->lifecycleFileUpload();
+   }
+
+   /**
+    * @return Collection<int, KilometerTrack>
+    */
+   public function getKilometerTracks(): Collection
+   {
+       return $this->kilometerTracks;
+   }
+
+   public function addKilometerTrack(KilometerTrack $kilometerTrack): self
+   {
+       if (!$this->kilometerTracks->contains($kilometerTrack)) {
+           $this->kilometerTracks->add($kilometerTrack);
+           $kilometerTrack->setDriver($this);
+       }
+
+       return $this;
+   }
+
+   public function removeKilometerTrack(KilometerTrack $kilometerTrack): self
+   {
+       if ($this->kilometerTracks->removeElement($kilometerTrack)) {
+           // set the owning side to null (unless already changed)
+           if ($kilometerTrack->getDriver() === $this) {
+               $kilometerTrack->setDriver(null);
+           }
+       }
+
+       return $this;
    }
 
 

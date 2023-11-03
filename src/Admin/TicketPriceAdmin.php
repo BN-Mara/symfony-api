@@ -4,6 +4,7 @@ namespace App\Admin;
 
 use App\Entity\Competition;
 use App\Entity\Notification;
+use App\Entity\Region;
 use App\Service\NotificationService;
 use Sonata\AdminBundle\Admin\AbstractAdmin;
 use Sonata\AdminBundle\Datagrid\DatagridMapper;
@@ -31,6 +32,12 @@ final class TicketPriceAdmin extends AbstractAdmin{
 
     protected function configureFormFields(FormMapper $form): void
     {
+        $form->add('region', EntityType::class,[
+            'class' => Region::class,
+            'choice_label' => 'name',
+            'multiple' => false,
+            'expanded' => false,
+        ]);
        
         $form->add('price', TextType::class);
         $form->add('description', TextareaType::class);
@@ -39,6 +46,7 @@ final class TicketPriceAdmin extends AbstractAdmin{
 
     protected function configureDatagridFilters(DatagridMapper $datagrid): void
     {
+        $datagrid->add('region.name');
         $datagrid->add('price');
         $datagrid->add('description');
         $datagrid->add('createdAt');
@@ -52,7 +60,7 @@ final class TicketPriceAdmin extends AbstractAdmin{
     protected function configureListFields(ListMapper $list): void
     {
         
-        
+        $list->addIdentifier('region.name');
         $list->addIdentifier('price');
         $list->addIdentifier('description');
         $list->addIdentifier('createdAt');
@@ -63,6 +71,7 @@ final class TicketPriceAdmin extends AbstractAdmin{
     protected function configureShowFields(ShowMapper $show): void
     {
 
+        $show->add('region.name');
         $show->add('price');
         $show->add('description');
         $show->add('createdAt');
@@ -80,8 +89,6 @@ final class TicketPriceAdmin extends AbstractAdmin{
         $me = $this->ts->getToken()->getUser();;
         $ticket->setCreatedBy($me->getUsername());
         $ticket->setUpdatedAt(new \DateTime('now',new \DateTimeZone('Africa/Kinshasa')));
-
-
       
     }
 

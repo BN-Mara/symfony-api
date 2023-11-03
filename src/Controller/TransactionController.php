@@ -61,7 +61,7 @@ class TransactionController extends AbstractController
         
 
     }
-    #[Route('/transaction/recharge', name: 'app_transaction_recharge')]
+    #[Route('/api/transaction/recharge', name: 'app_transaction_recharge')]
     public function recharge(Request $request): Response
     {
         $decoded = json_decode($request->getContent());
@@ -96,7 +96,7 @@ class TransactionController extends AbstractController
             //$trans->setRouteId($routeId);
             $this->em->persist($trans);
             $this->em->flush();
-            return $this->json(["status"=>true,"message"=>"Recharge effectuee avec succes"]);
+            return $this->json(["status"=>true,"message"=>"Recharge effectuee avec succes","balance"=>$rest]);
 
 
         }else{

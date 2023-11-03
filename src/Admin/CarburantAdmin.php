@@ -4,6 +4,8 @@ namespace App\Admin;
 
 use App\Entity\Competition;
 use App\Entity\Notification;
+use App\Entity\Region;
+use App\Entity\Vehicle;
 use App\Service\NotificationService;
 use Sonata\AdminBundle\Admin\AbstractAdmin;
 use Sonata\AdminBundle\Datagrid\DatagridMapper;
@@ -20,7 +22,7 @@ use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 
 
-final class CardAdmin extends AbstractAdmin{
+final class CarburantAdmin extends AbstractAdmin{
 
     public function __construct(private NotificationService $notifyer)
     {
@@ -29,21 +31,28 @@ final class CardAdmin extends AbstractAdmin{
 
     protected function configureFormFields(FormMapper $form): void
     {
+        $form->add('vehicle', EntityType::class,[
+            'class' => Vehicle::class,
+            'choice_label' => 'name',
+            'multiple' => false,
+            'expanded' => false,
+        ]);
+        
+        $form->add('quantity', NumberType::class,[
+            'label'=>"quantity (Litre)"
+        ]);
        
-        $form->add('uid', TextType::class);
-        $form->add('cardHolder', TextType::class);
-        $form->add('phoneNumber', NumberType::class);
-        $form->add('isActive', CheckboxType::class);
         
         
     }
 
     protected function configureDatagridFilters(DatagridMapper $datagrid): void
     {
-        $datagrid->add('uid');
-        $datagrid->add('cardHolder');
-        $datagrid->add('phoneNumber');
-        $datagrid->add('balance');
+        $datagrid->add('vehicle.name');
+        $datagrid->add('quantity');
+        $datagrid->add('createdAt');
+        
+        
         
 
     
@@ -53,31 +62,26 @@ final class CardAdmin extends AbstractAdmin{
     {
         
         
-        $list->addIdentifier('uid');
-        $list->addIdentifier('cardHolder');
-        $list->addIdentifier('phoneNumber');
-        $list->addIdentifier('balance');
+        $list->addIdentifier('vehicle.name');
+        $list->addIdentifier('quantity');
         $list->addIdentifier('createdAt');
-        $list->addIdentifier('updatedAt');
 
         
     }
 
     protected function configureShowFields(ShowMapper $show): void
     {
-        $show->add('uid');
-        $show->add('cardHolder');
-        $show->add('phoneNumber');
+        $show->add('vehicle.name');
+        $show->add('quantity');
         $show->add('createdAt');
-        $show->add('updatedAt');
 
     }
-    public function prePersist(object $card): void
+    public function prePersist(object $user): void
     {
-        $card->setBalance(0);
+        
     }
 
-    public function preUpdate(object $card): void
+    public function preUpdate(object $user): void
     {
       
     }

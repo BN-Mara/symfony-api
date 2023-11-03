@@ -71,6 +71,13 @@ security:
         # - { path: ^/admin, roles: ROLE_ADMIN }
         # - { path: ^/profile, roles: ROLE_USER }
         # - { path: ^/api/login, roles: PUBLIC_ACCESS }
+        # The WDT has to be allowed to anonymous users to avoid requiring the login with the AJAX request
+        - { path: ^/wdt/, role: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/profiler/, role: IS_AUTHENTICATED_ANONYMOUSLY }
+
+        # AsseticBundle paths used when using the controller for assets
+        - { path: ^/js/, role: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/css/, role: IS_AUTHENTICATED_ANONYMOUSLY }
         # Admin login page needs to be accessed without credential
         - { path: ^/admin/login$, role: PUBLIC_ACCESS }
         - { path: ^/admin/logout$, role: PUBLIC_ACCESS }
@@ -83,8 +90,8 @@ security:
         - { path: ^/api/places, role: PUBLIC_ACCESS }
         - { path: ^/api,       roles: IS_AUTHENTICATED_FULLY }
 
-    #acl:
-    #    connection: default
+acl:
+    connection: default
 
 when@test:
     security:

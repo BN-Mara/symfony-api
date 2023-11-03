@@ -33,11 +33,15 @@ class Region
     #[ORM\OneToMany(mappedBy: 'region', targetEntity: Vehicle::class)]
     private Collection $vehicles;
 
+    #[ORM\OneToMany(mappedBy: 'region', targetEntity: TicketPrice::class)]
+    private Collection $ticketPrices;
+
     public function __construct()
     {
         $this->places = new ArrayCollection();
         $this->createdAt = new \DateTime('now',new \DateTimeZone('Africa/Kinshasa'));
         $this->vehicles = new ArrayCollection();
+        $this->ticketPrices = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -135,6 +139,36 @@ class Region
             // set the owning side to null (unless already changed)
             if ($vehicle->getRegion() === $this) {
                 $vehicle->setRegion(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, TicketPrice>
+     */
+    public function getTicketPrices(): Collection
+    {
+        return $this->ticketPrices;
+    }
+
+    public function addTicketPrice(TicketPrice $ticketPrice): self
+    {
+        if (!$this->ticketPrices->contains($ticketPrice)) {
+            $this->ticketPrices->add($ticketPrice);
+            $ticketPrice->setRegion($this);
+        }
+
+        return $this;
+    }
+
+    public function removeTicketPrice(TicketPrice $ticketPrice): self
+    {
+        if ($this->ticketPrices->removeElement($ticketPrice)) {
+            // set the owning side to null (unless already changed)
+            if ($ticketPrice->getRegion() === $this) {
+                $ticketPrice->setRegion(null);
             }
         }
 

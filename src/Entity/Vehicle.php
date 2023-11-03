@@ -62,10 +62,21 @@ class Vehicle
      */
     private ?UploadedFile $file = null;
 
+    #[ORM\Column(nullable: true)]
+    private ?float $kilometer = null;
+
+    #[ORM\OneToMany(mappedBy: 'vehicle', targetEntity: KilometerTrack::class)]
+    private Collection $kilometerTracks;
+
+    #[ORM\OneToMany(mappedBy: 'vehicle', targetEntity: Carburant::class)]
+    private Collection $carburants;
+
     public function __construct()
     {
         $this->routes = new ArrayCollection();
         $this->users = new ArrayCollection();
+        $this->kilometerTracks = new ArrayCollection();
+        $this->carburants = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -281,6 +292,78 @@ class Vehicle
    {
       $this->setUpdatedAt(new \DateTime());
       $this->lifecycleFileUpload();
+   }
+
+   public function getKilometer(): ?float
+   {
+       return $this->kilometer;
+   }
+
+   public function setKilometer(?float $kilometer): self
+   {
+       $this->kilometer = $kilometer;
+
+       return $this;
+   }
+
+   /**
+    * @return Collection<int, KilometerTrack>
+    */
+   public function getKilometerTracks(): Collection
+   {
+       return $this->kilometerTracks;
+   }
+
+   public function addKilometerTrack(KilometerTrack $kilometerTrack): self
+   {
+       if (!$this->kilometerTracks->contains($kilometerTrack)) {
+           $this->kilometerTracks->add($kilometerTrack);
+           $kilometerTrack->setVehicle($this);
+       }
+
+       return $this;
+   }
+
+   public function removeKilometerTrack(KilometerTrack $kilometerTrack): self
+   {
+       if ($this->kilometerTracks->removeElement($kilometerTrack)) {
+           // set the owning side to null (unless already changed)
+           if ($kilometerTrack->getVehicle() === $this) {
+               $kilometerTrack->setVehicle(null);
+           }
+       }
+
+       return $this;
+   }
+
+   /**
+    * @return Collection<int, Carburant>
+    */
+   public function getCarburants(): Collection
+   {
+       return $this->carburants;
+   }
+
+   public function addCarburant(Carburant $carburant): self
+   {
+       if (!$this->carburants->contains($carburant)) {
+           $this->carburants->add($carburant);
+           $carburant->setVehicle($this);
+       }
+
+       return $this;
+   }
+
+   public function removeCarburant(Carburant $carburant): self
+   {
+       if ($this->carburants->removeElement($carburant)) {
+           // set the owning side to null (unless already changed)
+           if ($carburant->getVehicle() === $this) {
+               $carburant->setVehicle(null);
+           }
+       }
+
+       return $this;
    }
 
 }

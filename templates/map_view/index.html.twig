@@ -23,90 +23,116 @@
     <div id="map" style="width:100%;height:1000px;"></div>
 
     <script>
+      var arrayMarkers = [];
       
-    function myMap() {
-    
-    var map = new google.maps.Map(document.getElementById("map"), mapOptions);
-      var myCenter = new google.maps.LatLng(-4.340912, 15.314222);
-      var mapCanvas = document.getElementById("map");
-      var mapOptions = {center: myCenter, zoom: 16};
-      var map = new google.maps.Map(mapCanvas, mapOptions);
-      const shape = {
-    coords: [1, 1, 1, 20, 18, 20, 18, 1],
-    type: "poly",
-  };
-  const image = {
-    url: "https://maps.google.com/mapfiles/ms/icons/blue-dot.png",
-    // This marker is 20 pixels wide by 32 pixels high.
-    size: new google.maps.Size(20, 32),
-    // The origin for this image is (0, 0).
-    origin: new google.maps.Point(0, 0),
-    // The anchor for this image is the base of the flagpole at (0, 32).
-    anchor: new google.maps.Point(0, 32),
-  };
-  
-  var vehs = JSON.parse('{{ data | json_encode | raw }}');
-  
-  
-  console.log(vehs)
-   // Create info window
+      var map;
+
+function setMarkers(vehs){
+        // Create info window
    var infowindow = new google.maps.InfoWindow({
     maxWidth: 350,
     pixelOffset: new google.maps.Size(-10,-25)
-});
-var infoFn = function (count) {
+  });
+  var infoFn = function (count) {
             return function (e) {
                 var content = '<div>' +
                     '<table class="table table-striped"><tr><td><span>Location:</span> </td><td><span>' + vehs[count].lat+','+vehs[count].lng + '</span></td></tr>' +
-                    '<tr><td><span> vehcle: </span> </td><td><span>' + vehs[count].name + '</span></td></tr>' +
-                    '<tr><td><span>, id: </span> </td><td><span>' + vehs[count].id + '</span></td></tr>' +
-                    '<tr><td><span>, Total: </span> </td><td><span>' + vehs[count].total + '</span></td></tr>' +
-                    '<tr><td><span>, Driver: </span> </td><td><span>' + vehs[count].driver + '</span></td></tr>' +
-                    '<tr><td><span>, Loging at: </span> </td><td><span>' + vehs[count].startingAt + '</span></td></tr>' +
-                    '</table></div>';
+                    '<tr><td><span> vehicle: </span> </td><td><span>' + vehs[count].name + '</span></td></tr>' +
+                    '<tr><td><span> Matricule: </span> </td><td><span>' + vehs[count].id + '</span></td></tr>' +
+                    '<tr><td><span> Total du jour: </span> </td><td><span>' + vehs[count].total + '</span></td></tr>' +
+                    '<tr><td><span> Driver: </span> </td><td><span>' + vehs[count].driver + '</span></td></tr>' +                    
+                    '</table>'+
+                    
+                    '<br><button class="btn btn-primary">Camera 1</button> <button class="btn btn-warning">Camera 2</button></div>';
 
                 infowindow.setContent(content);
                 infowindow.open(map);
                 infowindow.setPosition(new google.maps.LatLng(vehs[count].lat, vehs[count].lng));
             }
         };
+        for (let i = 0; i < vehs.length; i++){
+          const image =
+          "{{  app.request.schemeAndHttpHost }}"+"/images/"+vehs[i].color;
+      
+        const marker = new google.maps.Marker({
+          map,
+          position: new google.maps.LatLng(vehs[i].lat, vehs[i].lng),
+          icon: image,
+          //animation: google.maps.Animation.DROP,
+          title: vehs[i].name,
+        });
+      
+        /*const marker = new google.maps.Marker({
+          position: new google.maps.LatLng(vehs[i].lat, vehs[i].lng),
+          map,
+          content: beachFlagImg,
+          title: vehs[i].name,
+          zIndex: vehs[i].id,
+            });*/
+          // Add a click listener for each marker, and set up the info window.
+          let fn = infoFn(i);
+          google.maps.event.addListener(marker, 'click', fn);
+          arrayMarkers[i] = marker;
+            
+        }
 
 
-  for (let i = 0; i < vehs.length; i++){
+      }
+    async function myMap() {
+      const { AdvancedMarkerElement, PinElement } = await google.maps.importLibrary("marker");
+      const { Map } = await google.maps.importLibrary("maps");
+   /* var map = new google.maps.Map(document.getElementById("map"), mapOptions);
+      var myCenter = new google.maps.LatLng(-4.340912, 15.314222);
+      var mapCanvas = document.getElementById("map");
+      var mapOptions = {center: myCenter, zoom: 16};
+      var map = new google.maps.Map(mapCanvas, mapOptions);*/
+      
+      map = new Map(document.getElementById("map"), {
+    center: { lat: -4.340912, lng: 15.314222 },
+    zoom: 16,
+    mapId: "4504f8b37365c3d0",
+  });
+      
+  
+  var vehs = JSON.parse('{{ data | json_encode | raw }}');
+  
 
-  const marker = new google.maps.Marker({
-    position: new google.maps.LatLng(vehs[i].lat, vehs[i].lng),
-    map,
-    icon: {
-      path: "M-1.547 12l6.563-6.609-1.406-1.406-5.156 5.203-2.063-2.109-1.406 1.406zM0 0q2.906 0 4.945 2.039t2.039 4.945q0 1.453-0.727 3.328t-1.758 3.516-2.039 3.070-1.711 2.273l-0.75 0.797q-0.281-0.328-0.75-0.867t-1.688-2.156-2.133-3.141-1.664-3.445-0.75-3.375q0-2.906 2.039-4.945t4.945-2.039z",
-      fillColor: vehs[i].color,
-      scale: 1.8,
-      fillOpacity: 1,
-    },
+  console.log(vehs)
+   setMarkers(vehs);
+
+       
+
+ 
+}
+
+
+
+var ajaxFn = function () {
+
+        console.log("ajax call");
+        
+        $.ajax({
+            url: "{{ path('app_map_view_auto') }}",
+            type: "GET",
+            success: function (response) {
+               console.log(response);
+               console.log(arrayMarkers.length);
+               for (let i = 0; i < arrayMarkers.length; i++){
+                arrayMarkers[i].setMap(null);
+               }
+               setMarkers(response);
+               setTimeout(ajaxFn, 5000);
+            }
+        });
+}
+setTimeout(ajaxFn, 5000);
+
+
     
-    shape: shape,
-    title: vehs[i].name,
-    zIndex: vehs[i].id,
-      });
-    // Add a click listener for each marker, and set up the info window.
-    let fn = infoFn(i);
-    google.maps.event.addListener(marker, 'click', fn);
-      
-
-  }
-      
-     
-      
 
 
-
-      //var marker = new google.maps.Marker({position:new google.maps.LatLng(-4.340912, 15.314222),title: "Hello World!",});
-      //marker.setMap(map);
-      //var marker2 = new google.maps.Marker({position:new google.maps.LatLng(-4.341520371907936, 15.314261195212055),title: "My Hotel",});
-      //marker2.setMap(map);
-    }
     </script>
     
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDqfML23BjGKn60XGMNDAuUKM_zHRakaQc&callback=myMap"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?sensor=false&callback=myMap"></script>
  
     {% endblock %}

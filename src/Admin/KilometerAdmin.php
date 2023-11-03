@@ -4,6 +4,7 @@ namespace App\Admin;
 
 use App\Entity\Competition;
 use App\Entity\Notification;
+use App\Entity\Region;
 use App\Service\NotificationService;
 use Sonata\AdminBundle\Admin\AbstractAdmin;
 use Sonata\AdminBundle\Datagrid\DatagridMapper;
@@ -20,7 +21,7 @@ use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 
 
-final class CardAdmin extends AbstractAdmin{
+final class KilometerAdmin extends AbstractAdmin{
 
     public function __construct(private NotificationService $notifyer)
     {
@@ -29,21 +30,17 @@ final class CardAdmin extends AbstractAdmin{
 
     protected function configureFormFields(FormMapper $form): void
     {
-       
-        $form->add('uid', TextType::class);
-        $form->add('cardHolder', TextType::class);
-        $form->add('phoneNumber', NumberType::class);
-        $form->add('isActive', CheckboxType::class);
-        
+     
         
     }
 
     protected function configureDatagridFilters(DatagridMapper $datagrid): void
     {
-        $datagrid->add('uid');
-        $datagrid->add('cardHolder');
-        $datagrid->add('phoneNumber');
-        $datagrid->add('balance');
+        $datagrid->add('vehicle.name');
+        $datagrid->add('kilometer');
+        $datagrid->add('createdAt');
+        $datagrid->add('user.username');
+        
         
 
     
@@ -53,31 +50,28 @@ final class CardAdmin extends AbstractAdmin{
     {
         
         
-        $list->addIdentifier('uid');
-        $list->addIdentifier('cardHolder');
-        $list->addIdentifier('phoneNumber');
-        $list->addIdentifier('balance');
+        $list->addIdentifier('vehicle.name');
+        $list->addIdentifier('kilometer');
         $list->addIdentifier('createdAt');
-        $list->addIdentifier('updatedAt');
+        $list->addIdentifier('user.username');
 
         
     }
 
     protected function configureShowFields(ShowMapper $show): void
     {
-        $show->add('uid');
-        $show->add('cardHolder');
-        $show->add('phoneNumber');
+        $show->add('vehicle.name');
+        $show->add('kilometer');
         $show->add('createdAt');
-        $show->add('updatedAt');
+        $show->add('user.username');
 
     }
-    public function prePersist(object $card): void
+    public function prePersist(object $user): void
     {
-        $card->setBalance(0);
+        
     }
 
-    public function preUpdate(object $card): void
+    public function preUpdate(object $user): void
     {
       
     }

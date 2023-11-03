@@ -101,3 +101,7 @@ services:
         tags:
             - { name: kernel.event_listener, event: sonata.admin.event.configure.menu.sidebar, method: addMenuItems }
     Symfony\Component\Dotenv\Command\DotenvDumpCommand: ~
+    security.acl.permission.map:
+        class: Sonata\AdminBundle\Security\Acl\Permission\AdminPermissionMap
+
+    Sonata\UserBundle\Model\UserManagerInterface: '@sonata.user.manager.user'

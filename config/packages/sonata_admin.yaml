@@ -1,4 +1,7 @@
 sonata_admin:
+    security:
+        handler: sonata.admin.security.handler.acl
+        acl_user_manager: App\Manager\AclUserManager
     title: 'TransCar'
     dashboard:
         blocks:

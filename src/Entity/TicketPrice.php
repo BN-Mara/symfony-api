@@ -33,6 +33,9 @@ class TicketPrice
 
     #[ORM\Column(length: 255)]
     private ?string $description = null;
+
+    #[ORM\ManyToOne(inversedBy: 'ticketPrices')]
+    private ?Region $region = null;
     public function __construct()
     {
        
@@ -113,6 +116,18 @@ class TicketPrice
     public function setDescription(string $description): self
     {
         $this->description = $description;
+
+        return $this;
+    }
+
+    public function getRegion(): ?Region
+    {
+        return $this->region;
+    }
+
+    public function setRegion(?Region $region): self
+    {
+        $this->region = $region;
 
         return $this;
     }

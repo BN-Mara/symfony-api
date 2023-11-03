@@ -45,6 +45,9 @@ class NfcCard
     #[ORM\OneToMany(mappedBy: 'card', targetEntity: RechargeCarte::class)]
     private Collection $rechargeCartes;
 
+    #[ORM\Column(length: 32, nullable: true)]
+    private ?string $createdBy = null;
+
     public function __construct()
     {
         $this->transactions = new ArrayCollection();
@@ -197,6 +200,18 @@ class NfcCard
                 $rechargeCarte->setCard(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getCreatedBy(): ?string
+    {
+        return $this->createdBy;
+    }
+
+    public function setCreatedBy(?string $createdBy): self
+    {
+        $this->createdBy = $createdBy;
 
         return $this;
     }

@@ -21,6 +21,7 @@
         "sonata-project/admin-bundle": "^4.25",
         "sonata-project/doctrine-orm-admin-bundle": "^4.13",
         "sonata-project/user-bundle": "^5.9",
+        "symfony/acl-bundle": "^2.3",
         "symfony/asset": "6.2.*",
         "symfony/console": "6.2.*",
         "symfony/doctrine-messenger": "6.2.*",

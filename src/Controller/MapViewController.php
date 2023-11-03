@@ -71,16 +71,16 @@ class MapViewController extends AbstractController
             if(isset($res[0]["created_at"])){
                 $startingAt = $res[0]["created_at"];
             }
-            $color = "blue";
+            $color = "bus_blue.png";
             if($v->getRegion()->getId() == 1){
-                $color = "red";
+                $color = "bus_red.png";
             }else if($v->getRegion()->getId() == 2){
-                $color = "green";
+                $color = "bus_green.png";
             }else{
-                $color = "blue";
+                $color = "bus_blue.png";
             }
 
-            array_push($data,["name"=>$v->getName(), "id"=>$v->getId(), 
+            array_push($data,["name"=>$v->getName(), "id"=>$v->getMatricule(), 
             "lat"=>$v->getCurrentLat(),"lng"=>$v->getCurrentLng(), "total"=>$total,
               "driver"=>$driver,
               "startingAt"=>$startingAt,
@@ -102,8 +102,77 @@ class MapViewController extends AbstractController
     public function autoLoad(): Response
     {
         $vehicles = $this->em->getRepository(Vehicle::class)->findAll();
-       // $admin_pool = $this->get('sonata.admin.pool');
-       return $this->json($vehicles,200);
+        $conn = $this->em->getConnection();
+        $data = array();
+        foreach($vehicles as $v){
+            $sql = '
+            SELECT SUM(e.ticket_price) AS total FROM `route` e 
+            WHERE DATE(e.starting_time) =  CURDATE() AND e.vehicle_id=:vehicleId';
+        //die(var_dump($dql_sum));
+        $resultSet = $conn->executeQuery($sql, ['vehicleId' => $v->getId()]);
+        $res = $resultSet->fetchAllAssociative();
+        $total = 0;
+        if($res[0]["total"] != null){
+            $total = $res[0]["total"];
+
+        }
+        
+        //die(var_dump($res[0]["total"]));
+        
+            
+           /* $all_routes = $v->getRoutes();
+            $total = 0;
+            $routes = array_filter($all_routes, function ($element) {
+                $today = new \DateTime('now',new \DateTimeZone('Africa/Kinshasa'));
+
+                if (null !== $element->getStartingTime() && $today->diff($element->getStartingTime())->days == 0) {
+                    
+                    return TRUE;
+                }
+                return FALSE;
+              });
+
+              foreach($routes as $r){
+                if($r->getTicketPrice() !== null){
+                $total = $total + $r->getTicketPrice();
+                }
+              }*/
+              $sql = '
+              SELECT u.username, u.id, u.roles, l.created_at FROM user u 
+              INNER JOIN logins l ON u.id = l.user_id WHERE u.vehicle_id = :vehicleId
+              AND u.roles LIKE "%ROLE_DRIVER%" ORDER BY l.created_At DESC LIMIT 1;
+            ';
+            $resultSet = $conn->executeQuery($sql, ['vehicleId' => $v->getId()]);
+            $res = $resultSet->fetchAllAssociative();
+            
+             
+            $driver = "";
+            $startingAt = "";
+            if(isset($res[0]["username"])){
+                $driver = $res[0]["username"];
+            }
+            if(isset($res[0]["created_at"])){
+                $startingAt = $res[0]["created_at"];
+            }
+            $color = "bus_blue.png";
+            if($v->getRegion()->getId() == 1){
+                $color = "bus_red.png";
+            }else if($v->getRegion()->getId() == 2){
+                $color = "bus_green.png";
+            }else{
+                $color = "bus_blue.png";
+            }
+
+            array_push($data,["name"=>$v->getName(), "id"=>$v->getMatricule(), 
+            "lat"=>$v->getCurrentLat(),"lng"=>$v->getCurrentLng(), "total"=>$total,
+              "driver"=>$driver,
+              "startingAt"=>$startingAt,
+              "color"=>$color
+        ]);
+            
+
+        }
+       return $this->json($data,200);
         /*return $this->render('map_view/index.html.twig', [
            // 'admin_pool' => $admin_pool,
             'name' => "maps"
