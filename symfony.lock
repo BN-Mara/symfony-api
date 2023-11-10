@@ -12,6 +12,9 @@
             "./src/ApiResource/.gitignore"
         ]
     },
+    "cmen/google-charts-bundle": {
+        "version": "5.0.1"
+    },
     "doctrine/annotations": {
         "version": "2.0",
         "recipe": {
@@ -276,6 +279,15 @@
             "ref": "b46e4f8f1adb2864f0aa9c0ff57aea3324a07199"
         }
     },
+    "symfony/stimulus-bundle": {
+        "version": "2.13",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "main",
+            "version": "2.8",
+            "ref": "9e33a8a3794b603fb4be6c04ee5ecab901ce549e"
+        }
+    },
     "symfony/translation": {
         "version": "6.2",
         "recipe": {
@@ -302,6 +314,9 @@
             "./templates/base.html.twig"
         ]
     },
+    "symfony/ux-chartjs": {
+        "version": "v2.13.0"
+    },
     "symfony/validator": {
         "version": "6.2",
         "recipe": {
@@ -312,6 +327,25 @@
         },
         "files": [
             "./config/packages/validator.yaml"
+        ]
+    },
+    "symfony/webpack-encore-bundle": {
+        "version": "2.1",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "main",
+            "version": "1.10",
+            "ref": "eff2e505d4557c967b6710fe06bd947ba555cae5"
+        },
+        "files": [
+            "./assets/app.js",
+            "./assets/bootstrap.js",
+            "./assets/controllers.json",
+            "./assets/controllers/hello_controller.js",
+            "./assets/styles/app.css",
+            "./config/packages/webpack_encore.yaml",
+            "./package.json",
+            "./webpack.config.js"
         ]
     },
     "symfonycasts/reset-password-bundle": {

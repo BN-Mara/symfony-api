@@ -89,6 +89,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(mappedBy: 'driver', targetEntity: KilometerTrack::class)]
     private Collection $kilometerTracks;
 
+    #[ORM\OneToMany(mappedBy: 'driver', targetEntity: Versement::class)]
+    private Collection $versements;
+
 
 
     public function __construct()
@@ -97,6 +100,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->rechargeUsers = new ArrayCollection();
         $this->logins = new ArrayCollection();
         $this->kilometerTracks = new ArrayCollection();
+        $this->versements = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -491,6 +495,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
            // set the owning side to null (unless already changed)
            if ($kilometerTrack->getDriver() === $this) {
                $kilometerTrack->setDriver(null);
+           }
+       }
+
+       return $this;
+   }
+
+   /**
+    * @return Collection<int, Versement>
+    */
+   public function getVersements(): Collection
+   {
+       return $this->versements;
+   }
+
+   public function addVersement(Versement $versement): self
+   {
+       if (!$this->versements->contains($versement)) {
+           $this->versements->add($versement);
+           $versement->setDriver($this);
+       }
+
+       return $this;
+   }
+
+   public function removeVersement(Versement $versement): self
+   {
+       if ($this->versements->removeElement($versement)) {
+           // set the owning side to null (unless already changed)
+           if ($versement->getDriver() === $this) {
+               $versement->setDriver(null);
            }
        }
 

@@ -138,7 +138,7 @@ class MapViewController extends AbstractController
                 }
               }*/
               $sql = '
-              SELECT u.username, u.id, u.roles, l.created_at FROM user u 
+              SELECT u.username, u.id, u.roles, u.phone, l.created_at FROM user u 
               INNER JOIN logins l ON u.id = l.user_id WHERE u.vehicle_id = :vehicleId
               AND u.roles LIKE "%ROLE_DRIVER%" ORDER BY l.created_At DESC LIMIT 1;
             ';
@@ -148,8 +148,12 @@ class MapViewController extends AbstractController
              
             $driver = "";
             $startingAt = "";
+            $phone = "";
             if(isset($res[0]["username"])){
                 $driver = $res[0]["username"];
+            }
+            if(isset($res[0]["phone"])){
+                $phone = $res[0]["phone"];
             }
             if(isset($res[0]["created_at"])){
                 $startingAt = $res[0]["created_at"];
@@ -167,7 +171,8 @@ class MapViewController extends AbstractController
             "lat"=>$v->getCurrentLat(),"lng"=>$v->getCurrentLng(), "total"=>$total,
               "driver"=>$driver,
               "startingAt"=>$startingAt,
-              "color"=>$color
+              "color"=>$color,
+              "phone"=>$phone
         ]);
             
 

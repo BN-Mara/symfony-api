@@ -40,10 +40,11 @@ function setMarkers(vehs){
                     '<tr><td><span> vehicle: </span> </td><td><span>' + vehs[count].name + '</span></td></tr>' +
                     '<tr><td><span> Matricule: </span> </td><td><span>' + vehs[count].id + '</span></td></tr>' +
                     '<tr><td><span> Total du jour: </span> </td><td><span>' + vehs[count].total + '</span></td></tr>' +
-                    '<tr><td><span> Driver: </span> </td><td><span>' + vehs[count].driver + '</span></td></tr>' +                    
+                    '<tr><td><span> Driver: </span> </td><td><span>' + vehs[count].driver + '</span></td></tr>' +   
+                    '<tr><td><span> Driver Phone: </span> </td><td><span>' + vehs[count].phone + '</span></td></tr>' +                  
                     '</table>'+
                     
-                    '<br><button class="btn btn-primary">Camera 1</button> <button class="btn btn-warning">Camera 2</button></div>';
+                    '<br><button class="btn btn-primary">Camera 1</button> <button class="btn btn-warning">Camera 2</button> <button class="btn btn-danger">Stop engine</button> <br><br><button class="btn btn-info">Transactions</button> <button class="btn btn-info">Routes</button></div>';
 
                 infowindow.setContent(content);
                 infowindow.open(map);

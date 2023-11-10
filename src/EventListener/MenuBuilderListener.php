@@ -17,5 +17,11 @@ final class MenuBuilderListener
         ])->setExtras([
             'icon' => 'fa fa-map-marker', // html is also supported
         ]);
+        $menu->addChild('transactions',[
+            'label' => 'Tranasction',
+            'route' => 'app_admin_chart',
+        ])->setExtras([
+            'icon' => 'fa fa-money', // html is also supported
+        ]);
     }
 }

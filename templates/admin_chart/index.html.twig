@@ -1,0 +1,57 @@
+{% extends '@SonataAdmin/standard_layout.html.twig' %}
+    {% block header %}
+      
+            {{ encore_entry_link_tags('app') }}
+        
+    
+        
+            {{ encore_entry_script_tags('app') }}
+       
+     
+
+        
+    {% endblock %}
+      {% block top_bar_after_nav %} 
+          <li>
+              
+          </li>
+      {% endblock %}
+  
+    {% block sonata_admin_content %}
+        <div class="card">
+            <div class="box">
+                <div class="box-header with-border">
+                    <h3 class="box-title">Transactions</h3>
+                    <!--<div class="pull-right">
+                        <a class="btn btn-info" href="#" >Prime 5 </a>&nbsp;
+                        <a class="btn btn-light" href="#" >Prime 6 </a>&nbsp;
+                    </div>-->
+                    <div class="box-tools pull-right">
+                        <!-- Collapse Button -->
+                        <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                            <i class="fa fa-minus"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="box-body">
+                    <form method="GET" action="{{path('app_admin_chart')}}">
+            
+                    <div class="form-group">
+                        <label for="exampleFormControlSelect1">Filter</label>
+                        <select class="form-control" id="exampleFormControlSelect1" name="filter" onchange="this.form.submit()">
+                            <option value="today">Today</option>
+                            <option value="thismonth">This month</option>
+                            <option value="thisweek">This week</option>
+                        </select>
+                    </div>
+                    </form>
+                    <div id="div_chart"></div>
+                </div>
+            </div>
+        </div>
+    
+        <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+        <script type="text/javascript">
+            {{ gc_draw(piechart, 'div_chart') }}
+        </script>
+    {% endblock %}

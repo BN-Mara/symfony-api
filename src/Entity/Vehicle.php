@@ -71,12 +71,16 @@ class Vehicle
     #[ORM\OneToMany(mappedBy: 'vehicle', targetEntity: Carburant::class)]
     private Collection $carburants;
 
+    #[ORM\OneToMany(mappedBy: 'vehicle', targetEntity: Versement::class)]
+    private Collection $versements;
+
     public function __construct()
     {
         $this->routes = new ArrayCollection();
         $this->users = new ArrayCollection();
         $this->kilometerTracks = new ArrayCollection();
         $this->carburants = new ArrayCollection();
+        $this->versements = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -360,6 +364,36 @@ class Vehicle
            // set the owning side to null (unless already changed)
            if ($carburant->getVehicle() === $this) {
                $carburant->setVehicle(null);
+           }
+       }
+
+       return $this;
+   }
+
+   /**
+    * @return Collection<int, Versement>
+    */
+   public function getVersements(): Collection
+   {
+       return $this->versements;
+   }
+
+   public function addVersement(Versement $versement): self
+   {
+       if (!$this->versements->contains($versement)) {
+           $this->versements->add($versement);
+           $versement->setVehicle($this);
+       }
+
+       return $this;
+   }
+
+   public function removeVersement(Versement $versement): self
+   {
+       if ($this->versements->removeElement($versement)) {
+           // set the owning side to null (unless already changed)
+           if ($versement->getVehicle() === $this) {
+               $versement->setVehicle(null);
            }
        }
 

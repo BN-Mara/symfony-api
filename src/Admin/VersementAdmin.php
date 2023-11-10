@@ -5,6 +5,8 @@ namespace App\Admin;
 use App\Entity\Competition;
 use App\Entity\Notification;
 use App\Entity\Region;
+use App\Entity\User;
+use App\Entity\Vehicle;
 use App\Service\NotificationService;
 use Sonata\AdminBundle\Admin\AbstractAdmin;
 use Sonata\AdminBundle\Datagrid\DatagridMapper;
@@ -18,11 +20,11 @@ use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
-use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 
 
-final class TicketPriceAdmin extends AbstractAdmin{
+final class VersementAdmin extends AbstractAdmin{
+
     private $ts;
 
     public function __construct($ts,private NotificationService $notifyer)
@@ -32,25 +34,29 @@ final class TicketPriceAdmin extends AbstractAdmin{
 
     protected function configureFormFields(FormMapper $form): void
     {
-        $form->add('region', EntityType::class,[
-            'class' => Region::class,
+        $form->add('vehicle', EntityType::class,[
+            'class' => Vehicle::class,
             'choice_label' => 'name',
             'multiple' => false,
             'expanded' => false,
         ]);
        
-        $form->add('price', TextType::class);
-        $form->add('description', TextareaType::class);
- 
+        $form->add('amount', NumberType::class);
+        $form->add('driver', EntityType::class,[
+            'class' => User::class,
+            'choice_label' => 'username',
+            'multiple' => false,
+            'expanded' => false,
+        ]);
+        
     }
 
     protected function configureDatagridFilters(DatagridMapper $datagrid): void
     {
-        $datagrid->add('region.name');
-        $datagrid->add('price');
-        $datagrid->add('description');
+        $datagrid->add('vehicle.name');
+        $datagrid->add('amount');
         $datagrid->add('createdAt');
-        $datagrid->add('updatedAt');
+        $datagrid->add('driver.username');
         
         
 
@@ -60,35 +66,31 @@ final class TicketPriceAdmin extends AbstractAdmin{
     protected function configureListFields(ListMapper $list): void
     {
         
-        $list->addIdentifier('region.name');
-        $list->addIdentifier('price');
-        $list->addIdentifier('description');
+        
+        $list->addIdentifier('vehicle.name');
+        $list->addIdentifier('amount');
         $list->addIdentifier('createdAt');
-        $list->addIdentifier('updatedAt');
+        $list->addIdentifier('driver.username');
+
         
     }
 
     protected function configureShowFields(ShowMapper $show): void
     {
-
-        $show->add('region.name');
-        $show->add('price');
-        $show->add('description');
+        $show->add('vehicle.name');
+        $show->add('amount');
         $show->add('createdAt');
-        $show->add('updatedAt');
+        $show->add('driver.username');
 
     }
-    public function prePersist(object $ticket): void
+    public function prePersist(object $vers): void
     {
         $me = $this->ts->getToken()->getUser();
-        $ticket->setCreatedBy($me->getUsername());
+        $vers->setCreatedBy($me->getUsername());
     }
 
-    public function preUpdate(object $ticket): void
+    public function preUpdate(object $user): void
     {
-        $me = $this->ts->getToken()->getUser();;
-        $ticket->setCreatedBy($me->getUsername());
-        $ticket->setUpdatedAt(new \DateTime('now',new \DateTimeZone('Africa/Kinshasa')));
       
     }
 
