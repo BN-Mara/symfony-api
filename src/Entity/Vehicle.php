@@ -74,6 +74,9 @@ class Vehicle
     #[ORM\OneToMany(mappedBy: 'vehicle', targetEntity: Versement::class)]
     private Collection $versements;
 
+    #[ORM\OneToMany(mappedBy: 'vehicle', targetEntity: Alert::class)]
+    private Collection $alerts;
+
     public function __construct()
     {
         $this->routes = new ArrayCollection();
@@ -81,6 +84,7 @@ class Vehicle
         $this->kilometerTracks = new ArrayCollection();
         $this->carburants = new ArrayCollection();
         $this->versements = new ArrayCollection();
+        $this->alerts = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -394,6 +398,36 @@ class Vehicle
            // set the owning side to null (unless already changed)
            if ($versement->getVehicle() === $this) {
                $versement->setVehicle(null);
+           }
+       }
+
+       return $this;
+   }
+
+   /**
+    * @return Collection<int, Alert>
+    */
+   public function getAlerts(): Collection
+   {
+       return $this->alerts;
+   }
+
+   public function addAlert(Alert $alert): self
+   {
+       if (!$this->alerts->contains($alert)) {
+           $this->alerts->add($alert);
+           $alert->setVehicle($this);
+       }
+
+       return $this;
+   }
+
+   public function removeAlert(Alert $alert): self
+   {
+       if ($this->alerts->removeElement($alert)) {
+           // set the owning side to null (unless already changed)
+           if ($alert->getVehicle() === $this) {
+               $alert->setVehicle(null);
            }
        }
 

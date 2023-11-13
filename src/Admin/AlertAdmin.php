@@ -4,9 +4,9 @@ namespace App\Admin;
 
 use App\Entity\Competition;
 use App\Entity\Notification;
-use App\Entity\User;
+use App\Entity\Region;
+use App\Entity\Vehicle;
 use App\Service\NotificationService;
-use Doctrine\ORM\EntityManagerInterface;
 use Sonata\AdminBundle\Admin\AbstractAdmin;
 use Sonata\AdminBundle\Datagrid\DatagridMapper;
 use Sonata\AdminBundle\Datagrid\ListMapper;
@@ -19,39 +19,46 @@ use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
-use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 
 
-final class LoginsAdmin extends AbstractAdmin{
+final class AlertAdmin extends AbstractAdmin{
 
-    public function __construct(private NotificationService $notifyer, private EntityManagerInterface $em)
+    public function __construct(private NotificationService $notifyer)
     {
         
     }
 
-   /* protected function configureFormFields(FormMapper $form): void
+    protected function configureFormFields(FormMapper $form): void
     {
-       
-        $form->add('user', EntityType::class,[
-            'class' => User::class,
-            'choice_label' => 'username',
+        $form->add('vehicle', EntityType::class,[
+            'class' => Vehicle::class,
+            'choice_label' => 'name',
             'multiple' => false,
             'expanded' => false,
         ]);
-        $form->add('amount', NumberType::class);
- 
-    }*/
+        
+        $form->add('title', TextType::class,[
+            
+        ]);
+        $form->add('description', TextType::class,[
+            
+        ]);
+       
+        
+        
+    }
 
     protected function configureDatagridFilters(DatagridMapper $datagrid): void
     {
-        $datagrid->add('user.username');
+        $datagrid->add('vehicle.name');
+        $datagrid->add('title');
+        $datagrid->add('description');
         $datagrid->add('createdAt');
-        $datagrid->add('endTime');
-        $datagrid->add('user.vehicle.name');
+        
+        
+        
 
-        
-        
     
     }
 
@@ -59,39 +66,31 @@ final class LoginsAdmin extends AbstractAdmin{
     {
         
         
-        
-        $list->add('user.username');
-        $list->add('createdAt');
-        $list->add('endTime');
-        $list->add('user.vehicle.name');
-
+        $list->addIdentifier('vehicle.name');
+        $list->addIdentifier('title');
+        $list->addIdentifier('description');
+        $list->addIdentifier('createdAt');
+        $list->addIdentifier('isSeen');
 
         
     }
 
     protected function configureShowFields(ShowMapper $show): void
     {
-
-        $show->add('user.username');
+        $show->add('vehicle.name');
+        $show->add('title');
+        $show->add('description');
         $show->add('createdAt');
-        $show->add('endTime');
-        $show->add('user.vehicle.name');
-
+        $show->add('isSeen');
 
     }
-    public function prePersist(object $recharge): void
+    public function prePersist(object $alert): void
     {
-        //$user = $this->em->getRepository(User::class)->findBy(["username"])
-       
-
+        $alert->setIsSeen(false);
     }
 
-    public function preUpdate(object $recharge): void
+    public function preUpdate(object $alert): void
     {
-        //$ticket->setUpdatedAt(new \DateTime('now',new \DateTimeZone('Africa/Kinshasa')));
-        return ;
-
-
       
     }
 

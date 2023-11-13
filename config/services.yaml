@@ -98,6 +98,12 @@ services:
         tags:
             - { name: sonata.admin, model_class: App\Entity\Logins, manager_type: orm, label: Logins, group: Vehicles }
     
+    admin.alerts:
+        class: App\Admin\AlertAdmin
+        tags:
+            - { name: sonata.admin, model_class: App\Entity\Alert, manager_type: orm, label: Alert, group: Alerts }
+    
+    
     #admin.notification:
         #class: App\Admin\NotificationAdmin
         #tags:

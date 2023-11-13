@@ -2,9 +2,11 @@
 
 namespace App\Controller;
 
+use App\Entity\Alert;
 use App\Entity\Vehicle;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -19,88 +21,24 @@ class MapViewController extends AbstractController
     public function index(): Response
     {
         $vehicles = $this->em->getRepository(Vehicle::class)->findAll();
-        $conn = $this->em->getConnection();
-        $data = array();
-        foreach($vehicles as $v){
-            $sql = '
-            SELECT SUM(e.ticket_price) AS total FROM `route` e 
-            WHERE DATE(e.starting_time) =  CURDATE() AND e.vehicle_id=:vehicleId';
-        //die(var_dump($dql_sum));
-        $resultSet = $conn->executeQuery($sql, ['vehicleId' => $v->getId()]);
-        $res = $resultSet->fetchAllAssociative();
-        $total = 0;
-        if($res[0]["total"] != null){
-            $total = $res[0]["total"];
-
-        }
-        
-        //die(var_dump($res[0]["total"]));
-        
-            
-           /* $all_routes = $v->getRoutes();
-            $total = 0;
-            $routes = array_filter($all_routes, function ($element) {
-                $today = new \DateTime('now',new \DateTimeZone('Africa/Kinshasa'));
-
-                if (null !== $element->getStartingTime() && $today->diff($element->getStartingTime())->days == 0) {
-                    
-                    return TRUE;
-                }
-                return FALSE;
-              });
-
-              foreach($routes as $r){
-                if($r->getTicketPrice() !== null){
-                $total = $total + $r->getTicketPrice();
-                }
-              }*/
-              $sql = '
-              SELECT u.username, u.id, u.roles, l.created_at FROM user u 
-              INNER JOIN logins l ON u.id = l.user_id WHERE u.vehicle_id = :vehicleId
-              AND u.roles LIKE "%ROLE_DRIVER%" ORDER BY l.created_At DESC LIMIT 1;
-            ';
-            $resultSet = $conn->executeQuery($sql, ['vehicleId' => $v->getId()]);
-            $res = $resultSet->fetchAllAssociative();
-            
-             
-            $driver = "";
-            $startingAt = "";
-            if(isset($res[0]["username"])){
-                $driver = $res[0]["username"];
-            }
-            if(isset($res[0]["created_at"])){
-                $startingAt = $res[0]["created_at"];
-            }
-            $color = "bus_blue.png";
-            if($v->getRegion()->getId() == 1){
-                $color = "bus_red.png";
-            }else if($v->getRegion()->getId() == 2){
-                $color = "bus_green.png";
-            }else{
-                $color = "bus_blue.png";
-            }
-
-            array_push($data,["name"=>$v->getName(), "id"=>$v->getMatricule(), 
-            "lat"=>$v->getCurrentLat(),"lng"=>$v->getCurrentLng(), "total"=>$total,
-              "driver"=>$driver,
-              "startingAt"=>$startingAt,
-              "color"=>$color
-        ]);
-            
-
-        }
-        
        // $admin_pool = $this->get('sonata.admin.pool');
         return $this->render('map_view/index.html.twig', [
            // 'admin_pool' => $admin_pool,
             'vehicles' => json_encode($vehicles),
-            'data'=>$data
+            'data'=>$this->getData()
         ]);
     }
 
     #[Route('/admin/map/auto', name: 'app_map_view_auto')]
     public function autoLoad(): Response
     {
+        
+       return $this->json($this->getData(),200);
+      
+    }
+
+    private function getData() : array{
+        
         $vehicles = $this->em->getRepository(Vehicle::class)->findAll();
         $conn = $this->em->getConnection();
         $data = array();
@@ -116,29 +54,11 @@ class MapViewController extends AbstractController
             $total = $res[0]["total"];
 
         }
-        
-        //die(var_dump($res[0]["total"]));
-        
-            
-           /* $all_routes = $v->getRoutes();
-            $total = 0;
-            $routes = array_filter($all_routes, function ($element) {
-                $today = new \DateTime('now',new \DateTimeZone('Africa/Kinshasa'));
-
-                if (null !== $element->getStartingTime() && $today->diff($element->getStartingTime())->days == 0) {
-                    
-                    return TRUE;
-                }
-                return FALSE;
-              });
-
-              foreach($routes as $r){
-                if($r->getTicketPrice() !== null){
-                $total = $total + $r->getTicketPrice();
-                }
-              }*/
+        $alert = $this->em->getRepository(Alert::class)->findOneBy(["vehicle"=>$v->getId(),"isSeen"=>false]);
+       
+ 
               $sql = '
-              SELECT u.username, u.id, u.roles, u.phone, l.created_at FROM user u 
+              SELECT u.username, u.id, u.roles, l.created_at FROM user u 
               INNER JOIN logins l ON u.id = l.user_id WHERE u.vehicle_id = :vehicleId
               AND u.roles LIKE "%ROLE_DRIVER%" ORDER BY l.created_At DESC LIMIT 1;
             ';
@@ -158,31 +78,65 @@ class MapViewController extends AbstractController
             if(isset($res[0]["created_at"])){
                 $startingAt = $res[0]["created_at"];
             }
-            $color = "bus_blue.png";
-            if($v->getRegion()->getId() == 1){
-                $color = "bus_red.png";
-            }else if($v->getRegion()->getId() == 2){
-                $color = "bus_green.png";
-            }else{
-                $color = "bus_blue.png";
-            }
+           
 
-            array_push($data,["name"=>$v->getName(), "id"=>$v->getMatricule(), 
+            if($alert){
+                $color = "bus_blue_alert.png";
+                if($v->getRegion()->getId() == 1){
+                    $color = "bus_red_alert.png";
+                }else if($v->getRegion()->getId() == 2){
+                    $color = "bus_green_alert.png";
+                }else{
+                    $color = "bus_blue_alert.png";
+                }
+                array_push($data,["name"=>$v->getName(), "id"=>$v->getMatricule(), 
             "lat"=>$v->getCurrentLat(),"lng"=>$v->getCurrentLng(), "total"=>$total,
               "driver"=>$driver,
               "startingAt"=>$startingAt,
               "color"=>$color,
-              "phone"=>$phone
-        ]);
-            
+              "phone"=>$phone,
+              "alert"=>[$alert->getId(),$alert->getTitle(),$alert->getCreatedAt()]
+              
+                ]);
+            }else{
+                $color = "bus_blue.png";
+                if($v->getRegion()->getId() == 1){
+                    $color = "bus_red.png";
+                }else if($v->getRegion()->getId() == 2){
+                    $color = "bus_green.png";
+                }else{
+                    $color = "bus_blue.png";
+                }
+                array_push($data,["name"=>$v->getName(), "id"=>$v->getMatricule(), 
+            "lat"=>$v->getCurrentLat(),"lng"=>$v->getCurrentLng(), "total"=>$total,
+              "driver"=>$driver,
+              "startingAt"=>$startingAt,
+              "color"=>$color,
+              "phone"=>$phone,
+              
+                ]);
+
+            } 
 
         }
-       return $this->json($data,200);
-        /*return $this->render('map_view/index.html.twig', [
-           // 'admin_pool' => $admin_pool,
-            'name' => "maps"
-        ]);*/
+
+        return $data;
+
     }
+
+    #[Route('/admin/map/alert/update', methods:'POST', name: 'app_map_alert_update')]
+    public function updateAlert(Request $request): Response
+    {
+        $id = $request->request->get('id');
+        $alert = $this->em->getRepository(Alert::class)->find($id);
+        $alert->setIsSeen(true);
+        $this->em->flush();
+        
+       return $this->json(["success"=>true,"message"=>"Alert updated!"],200);
+      
+    }
+
+
     
 
 }
