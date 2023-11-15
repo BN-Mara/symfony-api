@@ -37,6 +37,7 @@ final class TicketPriceAdmin extends AbstractAdmin{
             'choice_label' => 'name',
             'multiple' => false,
             'expanded' => false,
+            'required' => false,
         ]);
        
         $form->add('price', TextType::class);

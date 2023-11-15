@@ -31,6 +31,12 @@ class Versement
 
     #[ORM\Column(length: 32)]
     private ?string $createdBy = null;
+    public function __construct()
+    {
+       
+        $this->createdAt = new \DateTime('now',new \DateTimeZone('Africa/Kinshasa'));
+        
+    }
 
     public function getId(): ?int
     {

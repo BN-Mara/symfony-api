@@ -63,18 +63,18 @@ services:
     admin.cards:
         class: App\Admin\CardAdmin
         tags:
-            - { name: sonata.admin, model_class: App\Entity\NfcCard, manager_type: orm, label: Cartes, group: Transactions, icon: "<i class=\"fa fa-money\"></i>" }
+            - { name: sonata.admin, model_class: App\Entity\NfcCard, manager_type: orm, label: 'Card list', group: Transactions, icon: "<i class=\"fa fa-money\"></i>" }
     admin.transactions:
         class: App\Admin\TransactionAdmin
         tags:
-            - { name: sonata.admin, model_class: App\Entity\Transaction, manager_type: orm, label: Transactions, group: Transactions }
+            - { name: sonata.admin, model_class: App\Entity\Transaction, manager_type: orm, label: 'Transactions list', group: Transactions }
     
     admin.rechargeusers:
         class: App\Admin\RechargeUserAdmin
         arguments:
             - '@security.token_storage'
         tags:
-            - { name: sonata.admin, model_class: App\Entity\RechargeUser, manager_type: orm, label: Recharges, group: Transactions }
+            - { name: sonata.admin, model_class: App\Entity\RechargeUser, manager_type: orm, label: 'User Recharges', group: Transactions }
     admin.rechargecartes:
         class: App\Admin\RechargeCarteAdmin
        
@@ -92,7 +92,7 @@ services:
         arguments:
             - '@security.token_storage'
         tags:
-            - { name: sonata.admin, model_class: App\Entity\TicketPrice, manager_type: orm, label: Tickets, group: Vehicles }
+            - { name: sonata.admin, model_class: App\Entity\TicketPrice, manager_type: orm, label: 'Tickets Price', group: Vehicles }
     admin.logins:
         class: App\Admin\LoginsAdmin
         tags:
@@ -101,7 +101,7 @@ services:
     admin.alerts:
         class: App\Admin\AlertAdmin
         tags:
-            - { name: sonata.admin, model_class: App\Entity\Alert, manager_type: orm, label: Alert, group: Alerts }
+            - { name: sonata.admin, model_class: App\Entity\Alert, manager_type: orm, label: Alert, group: Alerts,icon: "<i class=\"fa fa-bell\"></i>" }
     
     
     #admin.notification:
