@@ -88,7 +88,7 @@ security:
         - { path: ^/admin/, role: ROLE_ADMIN }
         - { path: ^/auth, roles: PUBLIC_ACCESS }
         - { path: ^/api/places, role: PUBLIC_ACCESS }
-        - { path: ^/api,       roles: PUBLIC_ACCESS }
+        - { path: ^/api,       roles: IS_AUTHENTICATED_FULLY }
 
 acl:
     connection: default
