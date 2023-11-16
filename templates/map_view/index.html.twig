@@ -49,7 +49,7 @@ function setMarkers(vehs){
                     '<tr><td><span> Driver Phone: </span> </td><td><span>' + vehs[count].phone + '</span></td></tr>' +                  
                     '</table>'+
                     
-                    '<br><button class="btn btn-primary">Camera 1</button> <button class="btn btn-warning">Camera 2</button> <button class="btn btn-danger">Stop engine</button> <br><br><button class="btn btn-info">Transactions</button> <button class="btn btn-info">Routes</button></div>';
+                    '<br><button class="btn btn-primary">Camera 1</button> <button class="btn btn-warning">Camera 2</button> <button class="btn btn-danger">Stop engine</button> <br><br><a href="'+vehs[count].transUrl+'" class="btn btn-info">Transactions</a> <a href="'+vehs[count].routeUrl+'" class="btn btn-info">Routes</a> </div>';
 
                 infowindow.setContent(content);
                 infowindow.open(map);

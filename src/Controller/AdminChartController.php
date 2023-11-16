@@ -35,15 +35,31 @@ class AdminChartController extends AbstractController
         $trans = $this->em->getRepository(Transaction::class)->findAll();
         $vs = $this->em->getRepository(Vehicle::class)->findAll();
         $arraysChart = array(['Vehicle name', 'total amount']);
+        $arraysChart2 = array(['Date','Total amount']);
         $filter = 'all';
         $title = 'All';
-        if($request->query->get('filter') !== NULL){
+        $filter_vehicle = 'all';
+        $fromDate = null;
+        $todate = null;
+        if($request->query->get('vehicle') !== NULL && $request->query->get('vehicle') !== ""){
+            $filter_vehicle = $request->query->get('vehicle');
+        }
+        if($request->query->get('filter') !== NULL && $request->query->get('filter') !== ""){
 
             $filter = $request->query->get('filter');
             
   
-          }
+        }else if($request->query->get('fromDate') !== NULL && $request->query->get('fromDate') !== ""){
+            $fromDate = $request->query->get('fromDate');
+            if($request->query->get('toDate') !== NULL && $request->query->get('toDate') !== ""){
+                $todate = $request->query->get('toDate');
+            }else{
+                 $dt= new \DateTime('now',new \DateTimeZone('Africa/Kinshasa'));
+                 $todate = $dt->format('Y-m-d');
+            }
 
+        }
+        if($filter_vehicle == 'all'){
         foreach($vs as $v){
             if($filter == 'today'){
                 $sql = '
@@ -82,24 +98,108 @@ class AdminChartController extends AbstractController
         }
         array_push($arraysChart,[$v->getName(),$total]);
         }
+        //array_push($arraysChart,["mazda11",5000]);
+        $chart = new \CMEN\GoogleChartsBundle\GoogleCharts\Charts\BarChart();
+        $chart->getData()->setArrayToDataTable($arraysChart);
+        $chart->getOptions()->setTitle('Transactions par vehicule');
+        $chart->getOptions()->getHAxis()->setTitle('Total');
+        $chart->getOptions()->getHAxis()->setMinValue(0);
+        $chart->getOptions()->getVAxis()->setTitle('Vehicule');
+        $chart->getOptions()->setWidth(600);
+        $chart->getOptions()->setHeight(600);
+    }else{
+        $vk = $this->em->getRepository(Vehicle::class)->findOneBy(["name"=>$filter_vehicle]);
+        if($filter == 'all'){
+            if($fromDate != null){
+                
+                $sql = '
+                SELECT SUM(e.amount) AS total, DATE(e.created_at) As creationDate FROM `transaction` e INNER JOIN `route` r ON
+                e.route_id = r.id
+                WHERE (DATE(e.created_at) between DATE(:dateFrom) AND DATE(:dateTo)) AND r.vehicle_id=:vehicleId';
+                $title = 'for '. $vk->getName().' - From '.$fromDate.' to '.$todate.' -' ;
+                $resultSet = $conn->executeQuery($sql, ['vehicleId' => $vk->getId(), 'dateFrom'=>$fromDate, 'dateTo'=>$todate]);
+            }else{
+                $sql = '
+                SELECT SUM(e.amount) AS total, DATE(e.created_at) As creationDate FROM `transaction` e INNER JOIN `route` r ON
+                e.route_id = r.id
+                WHERE r.vehicle_id=:vehicleId';
+                $title = 'for '. $vk->getName().' - All -';
+                $resultSet = $conn->executeQuery($sql, ['vehicleId' => $vk->getId()]);
+            }
+
+        }else{
+            if($filter == 'today'){
+                $sql = '
+                SELECT SUM(e.amount) AS total, DATE(e.created_at) As creationDate FROM `transaction` e INNER JOIN `route` r ON
+                e.route_id = r.id
+                WHERE DATE(e.created_at) =  CURDATE() AND r.vehicle_id=:vehicleId';
+                
+                $title = 'for '. $vk->getName().' - Today -';
+
+            }else if($filter == 'thismonth'){
+                $sql = '
+                SELECT SUM(e.amount) AS total, DATE(e.created_at) As creationDate FROM `transaction` e INNER JOIN `route` r ON
+                e.route_id = r.id
+                WHERE MONTH(DATE(e.created_at)) =  MONTH(CURDATE()) AND r.vehicle_id=:vehicleId';
+                
+                $title = 'for '. $vk->getName().' - This Month -';
+            }else if($filter == 'thisweek'){
+                $sql = '
+                SELECT SUM(e.amount) AS total, DATE(e.created_at) As creationDate FROM `transaction` e INNER JOIN `route` r ON
+                e.route_id = r.id
+                WHERE YEARWEEK(DATE(e.created_at)) =  YEARWEEK(CURDATE()) AND r.vehicle_id=:vehicleId';
+                
+                $title = 'for '. $vk->getFullname().'- This Week -';
+            }else{
+                $sql = '
+                SELECT SUM(e.amount) AS total, DATE(e.created_at) As creationDate FROM `transaction` e INNER JOIN `route` r ON
+                e.route_id = r.id
+                WHERE r.vehicle_id=:vehicleId';
+                $title = 'for '. $vk->getFullname().' -All-';
+
+            }
+            $resultSet = $conn->executeQuery($sql, ['vehicleId' => $vk->getId()]);
+        }
+        
+       
+    //die(var_dump($dql_sum));
+    
+    $res = $resultSet->fetchAllAssociative();
+    /*$total = 0;
+    if($res[0]["total"] != null){
+        $total = $res[0]["total"];
+
+    }*/
+    if($res){
+    foreach($res as $r){
+        
+            array_push($arraysChart2,[$r["creationDate"],$r["total"]]);
+       
+    }
+    }
+     //array_push($arraysChart,["mazda11",5000]);
+     $chart = new \CMEN\GoogleChartsBundle\GoogleCharts\Charts\BarChart();
+     $chart->getData()->setArrayToDataTable($arraysChart2);
+     $chart->getOptions()->setTitle('Transaction par vehicule');
+     $chart->getOptions()->getHAxis()->setTitle('Total');
+     $chart->getOptions()->getVAxis()->setMinValue(0);
+     $chart->getOptions()->getVAxis()->setTitle('Date');
+     $chart->getOptions()->setWidth(600);
+     $chart->getOptions()->setHeight(600);
+    
+    }
         
         
               
-               //array_push($arraysChart,["mazda11",5000]);
-               $chart = new \CMEN\GoogleChartsBundle\GoogleCharts\Charts\BarChart();
-               $chart->getData()->setArrayToDataTable($arraysChart);
-               $chart->getOptions()->setTitle('Transactions par vehicule');
-               $chart->getOptions()->getHAxis()->setTitle('Total');
-               $chart->getOptions()->getHAxis()->setMinValue(0);
-               $chart->getOptions()->getVAxis()->setTitle('Vehicule');
-               $chart->getOptions()->setWidth(600);
-               $chart->getOptions()->setHeight(600);
+               
 
     
         //return $this->render('AppBundle::index.html.twig', array('piechart' => $pieChart));
         return $this->render('admin_chart/index.html.twig', [
             'controller_name' => 'AdminChartController',
-            'piechart' => $chart
+            'piechart' => $chart,
+            'vehicles'=>$vehicles,
+            'title'=>$title
         ]);
     }
 

@@ -1,0 +1,140 @@
+{% extends '@SonataAdmin/standard_layout.html.twig' %}
+  {% block header %}
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
+    <link
+      href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet"
+    />
+
+  {% endblock %}
+    {% block top_bar_after_nav %} 
+        <li>
+            <a href="{{ path('acme_demo_hello_index', {'name': 'World'}) }}">
+                Maps
+            </a>
+        </li>
+    {% endblock %}
+
+    {% block sonata_admin_content %}
+  
+    <!-- before the closing <body> tag -->
+    
+
+    <div id="map" style="width:100%;height:1000px;"></div>
+
+    <script>
+      var arrayMarkers = [];
+      
+      var map;
+
+function setMarkers(vehs){
+        // Create info window
+   var infowindow = new google.maps.InfoWindow({
+    maxWidth: 350,
+    pixelOffset: new google.maps.Size(-10,-25)
+  });
+  var infoFn = function (count) {
+            return function (e) {
+              var ar = "";
+              
+                var content = '<div>' +
+                    '<table class="table table-striped"><tr><td><span>Location:</span> </td><td><span>' + vehs[count].slat+','+vehs[count].slng + '</span></td></tr>' +
+                    ar +
+                    '<tr><td><span>Location:</span> </td><td><span>' + vehs[count].elat+','+vehs[count].elng + '</span></td></tr>'+
+                    '<tr><td><span> Origine: </span> </td><td><span>' + vehs[count].origine+ '</span></td></tr>' +
+                    '<tr><td><span> Destination: </span> </td><td><span>' + vehs[count].destination + '</span></td></tr>' +                 
+                    '</table>';
+                    
+                    
+                infowindow.setContent(content);
+                infowindow.open(map);
+                infowindow.setPosition(new google.maps.LatLng(vehs[count].slat, vehs[count].slng));
+            }
+        };
+var infoFn2 = function (count) {
+            return function (e) {
+              var ar = "";
+              
+                var content = '<div>' +
+                    '<table class="table table-striped"><tr><td><span>Location:</span> </td><td><span>' + vehs[count].slat+','+vehs[count].slng + '</span></td></tr>' +
+                    ar +
+                    '<tr><td><span>Location:</span> </td><td><span>' + vehs[count].elat+','+vehs[count].elng + '</span></td></tr>'+
+                    '<tr><td><span> Origine: </span> </td><td><span>' + vehs[count].origine+ '</span></td></tr>' +
+                    '<tr><td><span> Destination: </span> </td><td><span>' + vehs[count].destination + '</span></td></tr>' +                 
+                    '</table>';
+                    
+                    
+                infowindow.setContent(content);
+                infowindow.open(map);
+                infowindow.setPosition(new google.maps.LatLng(vehs[count].elat, vehs[count].elng));
+            }
+        };
+        for (let i = 0; i < vehs.length; i++){
+          /*const image =
+          "{{  app.request.schemeAndHttpHost }}"+"/images/"+vehs[i].color;*/
+      
+        const marker = new google.maps.Marker({
+          map,
+          position: new google.maps.LatLng(vehs[i].slat, vehs[i].slng),
+          //icon: image,
+          //animation: google.maps.Animation.DROP,
+          title: vehs[i].origine,
+        });
+        const marker2 = new google.maps.Marker({
+          map,
+          position: new google.maps.LatLng(vehs[i].elat, vehs[i].elng),
+          //icon: image,
+          //animation: google.maps.Animation.DROP,
+          title: vehs[i].destination,
+        });
+      
+        /*const marker = new google.maps.Marker({
+          position: new google.maps.LatLng(vehs[i].lat, vehs[i].lng),
+          map,
+          content: beachFlagImg,
+          title: vehs[i].name,
+          zIndex: vehs[i].id,
+            });*/
+          // Add a click listener for each marker, and set up the info window.
+          let fn = infoFn(i);
+          let fn2 = infoFn2(i);
+          google.maps.event.addListener(marker, 'click', fn);
+          google.maps.event.addListener(marker2, 'click', fn2);
+          //arrayMarkers[i] = marker;
+            
+        }
+
+
+      }
+    async function myMap() {
+      const { AdvancedMarkerElement, PinElement } = await google.maps.importLibrary("marker");
+      const { Map } = await google.maps.importLibrary("maps");
+   /* var map = new google.maps.Map(document.getElementById("map"), mapOptions);
+      var myCenter = new google.maps.LatLng(-4.340912, 15.314222);
+      var mapCanvas = document.getElementById("map");
+      var mapOptions = {center: myCenter, zoom: 16};
+      var map = new google.maps.Map(mapCanvas, mapOptions);*/
+      
+      map = new Map(document.getElementById("map"), {
+    center: { lat: -4.340912, lng: 15.314222 },
+    zoom: 16,
+    mapId: "4504f8b37365c3d0",
+  });
+      
+  
+  var vehs = JSON.parse('{{ routes | json_encode | raw }}');
+  
+
+  console.log(vehs)
+   setMarkers(vehs);
+
+       
+
+ 
+}
+
+    </script>
+    
+    <script src="https://maps.googleapis.com/maps/api/js?sensor=false&callback=myMap"></script>
+ 
+    {% endblock %}

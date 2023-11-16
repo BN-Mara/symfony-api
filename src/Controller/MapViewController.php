@@ -9,10 +9,11 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class MapViewController extends AbstractController
 {
-    public function __construct(private EntityManagerInterface $em)
+    public function __construct(private EntityManagerInterface $em, private UrlGeneratorInterface $url)
     {
         
     }
@@ -95,7 +96,9 @@ class MapViewController extends AbstractController
               "startingAt"=>$startingAt,
               "color"=>$color,
               "phone"=>$phone,
-              "alert"=>[$alert->getId(),$alert->getTitle(),$alert->getCreatedAt()]
+              "alert"=>[$alert->getId(),$alert->getTitle(),$alert->getCreatedAt()],
+              "transUrl"=> $this->url->generate('app_admin_chart',['vehicle'=>$v->getName()]),
+              "routeUrl"=> $this->url->generate('app_map_vehicle',['vehicle'=>$v->getName()])
               
                 ]);
             }else{
@@ -113,6 +116,8 @@ class MapViewController extends AbstractController
               "startingAt"=>$startingAt,
               "color"=>$color,
               "phone"=>$phone,
+              "transUrl"=> $this->url->generate('app_admin_chart',['vehicle'=>$v->getName()]),
+              "routeUrl"=> $this->url->generate('app_map_vehicle',['vehicle'=>$v->getName()])
               
                 ]);
 
@@ -135,6 +140,31 @@ class MapViewController extends AbstractController
        return $this->json(["success"=>true,"message"=>"Alert updated!"],200);
       
     }
+    #[Route('/admin/map/one', name: 'app_map_vehicle')]
+    public function mapView(Request $request): Response
+    {
+        $name = $request->query->get('vehicle');
+        $v = $this->em->getRepository(Vehicle::class)->findOneBy(["name"=>$name]);
+        $rts = array();
+        if($v){
+            $routes = $v->getRoutes();
+            foreach($routes as $r){
+                array_push($rts,["slat"=>$r->getStartLat(),
+                 "slng"=>$r->getStartLng(), "elat"=>$r->getEndLat(),
+                 "elng"=>$r->getEndLng(), "origine"=>$r->getOrigine(), "destination"=>$r->getDestination()]);
+            }
+        }
+
+        
+        return $this->render('map_view/vehicle_map.html.twig', [
+            // 'admin_pool' => $admin_pool,
+             'vehicle' => $v->getName(),
+             'routes'=>$rts
+         ]);
+      
+    }
+
+
 
 
     
