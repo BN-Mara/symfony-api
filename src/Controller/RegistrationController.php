@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Logins;
 use App\Entity\User;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -156,6 +157,21 @@ class RegistrationController extends AbstractController
 
         }
 
+    }
+
+    #[Route("/logout", name:"app_logout", methods:"POST")]
+    public function logout(Request $request):Response{
+        
+        $user= $this->em->getRepository(User::class)->findOneBy([$this->getUser()->getUserIdentifier()]);
+        $date = new \DateTime('now',new \DateTimeZone('Africa/Kinshasa'));
+        $conn = $this->em->getConnection();
+        $sql = '
+        UPDATE  `logins` SET end_time = :endTime
+        WHERE  user_id = :userId AND end_time IS NULL';
+        $resultSet = $conn->executeQuery($sql, ['endTime' => $date, 'userId'=> $user->getId()]);
+        //$res = $resultSet->fetchAllAssociative();
+        return $this->json(["success"=>true,"message"=>"Logged out."]);
+     
     }
 
     
