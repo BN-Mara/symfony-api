@@ -126,6 +126,8 @@ class RegistrationController extends AbstractController
   
         
     }
+
+    
     
 
     #[Route(path:"/mail",name:"app_mailer", methods:"POST")]

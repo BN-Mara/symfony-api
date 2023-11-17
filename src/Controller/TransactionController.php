@@ -105,4 +105,36 @@ class TransactionController extends AbstractController
         
 
     }
+
+    #[Route('/api/card/create', name: 'app_card_create')]
+    public function createCard(Request $request): Response
+    {
+        $by = $this->getUser()->getUserIdentifier();
+        $decoded = json_decode($request->getContent());
+        $cardUid = $decoded->uid;
+        $holder = $decoded->cardHolder;
+        $phoneNumber = $decoded->phoneNumber;
+        if(property_exists($decoded, "balance"))
+            $balance = $decoded->balance;
+        else
+            $balance = 0;
+        $c = $this->em->getRepository(NfcCard::class)->findOneBy(["uid"=>$cardUid]);
+        if($c){
+            return $this->json(["success"=>false,"message"=>"Carte deja enregistree"],400);
+        }
+        $card = new NfcCard();
+        $card->setUid($cardUid);
+        $card->setCardHolder($holder);
+        $card->setPhoneNumber($phoneNumber);
+        if($balance >= 0)
+            $card->setBalance($balance);
+        else
+            $card->setBalance(0);
+        $card->setIsActive(true);
+        $card->setCreatedBy($by);
+        $this->em->persist($card);
+        $this->em->flush();
+        return $this->json(["success"=>true,"message"=>"Carte enregistree avec success"]);
+
+    }
 }

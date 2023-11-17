@@ -7,6 +7,7 @@ use App\Entity\User;
 use App\Entity\Vehicle;
 use App\Entity\Versement;
 use CMEN\GoogleChartsBundle\GoogleCharts\Charts\Material\ColumnChart;
+use CMEN\GoogleChartsBundle\GoogleCharts\Charts\Material\LineChart;
 use CMEN\GoogleChartsBundle\GoogleCharts\Charts\PieChart;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -29,6 +30,7 @@ class AdminChartController extends AbstractController
     #[Route('/admin/chart', name: 'app_admin_chart')]
     public function index(Request $request): Response
     {
+
 
         $vehicles = $this->em->getRepository(Vehicle::class)->findAll();
         $conn = $this->em->getConnection();
