@@ -6,6 +6,7 @@ use App\Entity\NfcCard;
 use App\Entity\RechargeCarte;
 use App\Entity\Route as EntityRoute;
 use App\Entity\Transaction;
+use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
