@@ -69,7 +69,7 @@ class TransactionController extends AbstractController
         //$routeId = $decoded->routeId;
         $amount = $decoded->amount;
         $userId = $this->getUser()->getUserIdentifier();
-        $user = $this->em->getRepository(User::class)->findBy(["username"=>$userId]);
+        $user = $this->em->getRepository(User::class)->findOneBy(["username"=>$userId]);
         $card = $this->em->getRepository(NfcCard::class)->findOneBy(["uid"=>$cardUid]);
         
         //$card = new NfcCard();
