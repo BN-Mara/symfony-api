@@ -21,8 +21,8 @@ use Symfony\Component\Mime\Email;
 class RegistrationController extends AbstractController
 {
     public function __construct(private EntityManagerInterface $em,
-     private UserPasswordHasherInterface $ph, private JWTTokenManagerInterface $jwtManager, 
-     private AuthenticationSuccessHandler $authHandler, private MailerInterface $mailer){
+    private UserPasswordHasherInterface $ph, private JWTTokenManagerInterface $jwtManager, 
+    private AuthenticationSuccessHandler $authHandler, private MailerInterface $mailer){
        
 
     }
@@ -73,10 +73,10 @@ class RegistrationController extends AbstractController
         'message' => 'Enregistré avec succès',
         'sub'=>$user->getId(),
         'username'=>$user->getUsername(),
-    'fullname' => $user->getFullname(),
-    'phone' => $user->getPhone(),
-    'isActive' => $user->isIsActive(),
-    'address' => $user->getAddress(),
+        'fullname' => $user->getFullname(),
+        'phone' => $user->getPhone(),
+        'isActive' => $user->isIsActive(),
+        'address' => $user->getAddress(),
         //'token'=>$token
         "token"=>$authContent->token,
         "refresh_token"=>$authContent->refresh_token,
@@ -110,10 +110,10 @@ class RegistrationController extends AbstractController
         'message' => 'Enregistré avec succès',
         'sub'=>$ck_user->getId(),
         'username'=>$ck_user->getUsername(),
-    'fullname' => $ck_user->getFullname(),
-    'phone' => $ck_user->getPhone(),
-    'isActive' => $ck_user->isIsActive(),
-    'address' => $ck_user->getAddress(),
+        'fullname' => $ck_user->getFullname(),
+        'phone' => $ck_user->getPhone(),
+        'isActive' => $ck_user->isIsActive(),
+        'address' => $ck_user->getAddress(),
         //'token'=>$token
         "token"=>$authContent->token,
         "refresh_token"=>$authContent->refresh_token,

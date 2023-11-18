@@ -37,6 +37,7 @@ public function onAuthenticationSuccessResponse(AuthenticationSuccessEvent $even
     $data['phone'] = $user->getPhone();
     $data['isActive'] = $user->isIsActive();
     $data['address'] = $user->getAddress();
+    $data['balance']  = $user->geBalance();
     if($user->getVehicle()){
     $vh = $user->getVehicle();
     $data['vehicle'] = ["id"=>$vh->getId(),"name"=>$vh->getName(),
