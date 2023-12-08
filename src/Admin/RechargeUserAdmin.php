@@ -83,7 +83,7 @@ final class RechargeUserAdmin extends AbstractAdmin{
         $user = $recharge->getUser();
         $me = $this->ts->getToken()->getUser();;
         $recharge->setCreatedBy($me->getUsername());
-        if($user->getBalance() != null){
+        if($user->getBalance() == null){
             $user->setBalance($recharge->getAmount());
         }else{
             $user->setBalance($user->getBalance() + $recharge->getAmount());

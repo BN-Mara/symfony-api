@@ -23,11 +23,11 @@ final class MenuBuilderListener
         ])->setExtras([
             'icon' => 'fa fa-bar-chart', // html is also supported
         ]);
-        $menu->getChild('Transactions')->addChild('versement_chart',[
+        /*$menu->getChild('Transactions')->addChild('versement_chart',[
             'label' => 'Versement Chart',
             'route' => 'app_admin_chart_versement',
         ])->setExtras([
             'icon' => 'fa fa-bar-chart', // html is also supported
-        ]);
+        ]);*/
     }
 }

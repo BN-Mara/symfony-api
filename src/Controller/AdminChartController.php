@@ -36,7 +36,7 @@ class AdminChartController extends AbstractController
         $conn = $this->em->getConnection();
         $trans = $this->em->getRepository(Transaction::class)->findAll();
         $vs = $this->em->getRepository(Vehicle::class)->findAll();
-        $arraysChart = array(['Vehicle name', 'total amount']);
+        $arraysChart = array(['Date', 'total Vessment', 'total general', 'total carte']);
         $arraysChart2 = array(['Date','Total amount']);
         $filter = 'all';
         $title = 'All';
@@ -62,83 +62,187 @@ class AdminChartController extends AbstractController
 
         }
         if($filter_vehicle == 'all'){
-        foreach($vs as $v){
+            $sql = '
+            SELECT *, (v.total + IFNULL(x.totalVers,0)) As somme FROM (SELECT SUM(IFNULL(tr.`amount`,0)) 
+            As total, DATE(tr.`created_at`) As creationDate FROM `transaction` tr INNER JOIN `route` r 
+            ON tr.route_id = r.id GROUP By DATE(tr.`created_at`) ) v   LEFT JOIN
+            (SELECT SUM(`versement`.`amount`) AS totalVers, DATE(`versement`.`created_at`) As
+            versDate FROM `versement` GROUP By DATE(`versement`.`created_at`) )
+            x ON v.creationDate = x.versDate
+            UNION SELECT *, (IFNULL(v.total,0) + x.totalVers) As somme FROM (SELECT SUM(IFNULL(tr.`amount`,0))
+             As total, DATE(tr.`created_at`) As creationDate FROM `transaction` tr INNER JOIN `route` r 
+             ON tr.route_id = r.id GROUP By DATE(tr.`created_at`) ) v   RIGHT JOIN
+            (SELECT SUM(`versement`.`amount`) AS totalVers, DATE(`versement`.`created_at`) As
+            versDate FROM `versement` GROUP By DATE(`versement`.`created_at`) ) x 
+            ON v.creationDate = x.versDate';
+        
             if($filter == 'today'){
-                $sql = '
-                SELECT SUM(e.amount) AS total FROM `transaction` e INNER JOIN `route` r ON
-                e.route_id = r.id
-                WHERE DATE(e.created_at) =  CURDATE() AND r.vehicle_id=:vehicleId';
+                $sql = 
+                '
+            SELECT *, (v.total + IFNULL(x.totalVers,0)) As somme FROM (SELECT SUM(IFNULL(tr.`amount`,0)) 
+            As total, DATE(tr.`created_at`) As creationDate FROM `transaction` tr INNER JOIN `route` r 
+            ON tr.route_id = r.id WHERE DATE(tr.`created_at`) =  CURDATE()  GROUP By DATE(tr.`created_at`) ) v   LEFT JOIN
+            (SELECT SUM(`versement`.`amount`) AS totalVers, DATE(`versement`.`created_at`) As
+            versDate FROM `versement` WHERE DATE(`versement`.`created_at`) =  CURDATE() GROUP By DATE(`versement`.`created_at`) )
+            x ON v.creationDate = x.versDate
+            UNION SELECT *, (IFNULL(v.total,0) + x.totalVers) As somme FROM (SELECT SUM(IFNULL(tr.`amount`,0))
+             As total, DATE(tr.`created_at`) As creationDate FROM `transaction` tr INNER JOIN `route` r 
+             ON tr.route_id = r.id WHERE DATE(tr.`created_at`) =  CURDATE() GROUP By DATE(tr.`created_at`) ) v   RIGHT JOIN
+            (SELECT SUM(`versement`.`amount`) AS totalVers, DATE(`versement`.`created_at`) As
+            versDate FROM `versement` WHERE DATE(`versement`.`created_at`) =  CURDATE() GROUP By DATE(`versement`.`created_at`) ) x 
+            ON v.creationDate = x.versDate';
+                
                 $title = 'Today';
 
             }else if($filter == 'thismonth'){
-                $sql = '
-                SELECT SUM(e.amount) AS total FROM `transaction` e INNER JOIN `route` r ON
-                e.route_id = r.id 
-                WHERE MONTH(DATE(e.created_at)) =  MONTH(CURDATE()) AND r.vehicle_id=:vehicleId';
+                $sql ='
+            SELECT *, (v.total + IFNULL(x.totalVers,0)) As somme FROM (SELECT SUM(IFNULL(tr.`amount`,0)) 
+            As total, DATE(tr.`created_at`) As creationDate FROM `transaction` tr INNER JOIN `route` r 
+            ON tr.route_id = r.id WHERE MONTH(DATE(tr.`created_at`)) =  MONTH(CURDATE())  GROUP By DATE(tr.`created_at`) ) v   LEFT JOIN
+            (SELECT SUM(`versement`.`amount`) AS totalVers, DATE(`versement`.`created_at`) As
+            versDate FROM `versement` WHERE MONTH(DATE(`versement`.`created_at`)) =  MONTH(CURDATE()) GROUP By DATE(`versement`.`created_at`) )
+            x ON v.creationDate = x.versDate
+            UNION SELECT *, (IFNULL(v.total,0) + x.totalVers) As somme FROM (SELECT SUM(IFNULL(tr.`amount`,0))
+             As total, DATE(tr.`created_at`) As creationDate FROM `transaction` tr INNER JOIN `route` r 
+             ON tr.route_id = r.id WHERE MONTH(DATE(tr.`created_at`)) =  MONTH(CURDATE()) GROUP By DATE(tr.`created_at`) ) v   RIGHT JOIN
+            (SELECT SUM(`versement`.`amount`) AS totalVers, DATE(`versement`.`created_at`) As
+            versDate FROM `versement` WHERE MONTH(DATE(`versement`.`created_at`)) =  MONTH(CURDATE()) GROUP By DATE(`versement`.`created_at`) ) x 
+            ON v.creationDate = x.versDate';
+             
                 $title = 'This Month';
             }else if($filter == 'thisweek'){
-                $sql = '
-                SELECT SUM(e.amount) AS total FROM `transaction` e INNER JOIN `route` r ON
-                e.route_id = r.id
-                WHERE YEARWEEK(DATE(e.created_at)) =  YEARWEEK(CURDATE()) AND r.vehicle_id=:vehicleId';
+                $sql ='
+                SELECT *, (v.total + IFNULL(x.totalVers,0)) As somme FROM (SELECT SUM(IFNULL(tr.`amount`,0)) 
+                As total, DATE(tr.`created_at`) As creationDate FROM `transaction` tr INNER JOIN `route` r 
+                ON tr.route_id = r.id WHERE YEARWEEK(DATE(tr.`created_at`)) =  YEARWEEK(CURDATE())  GROUP By DATE(tr.`created_at`) ) v   LEFT JOIN
+                (SELECT SUM(`versement`.`amount`) AS totalVers, DATE(`versement`.`created_at`) As
+                versDate FROM `versement` WHERE YEARWEEK(DATE(`versement`.`created_at`)) =  YEARWEEK(CURDATE()) GROUP By DATE(`versement`.`created_at`) )
+                x ON v.creationDate = x.versDate
+                UNION SELECT *, (IFNULL(v.total,0) + x.totalVers) As somme FROM (SELECT SUM(IFNULL(tr.`amount`,0))
+                 As total, DATE(tr.`created_at`) As creationDate FROM `transaction` tr INNER JOIN `route` r 
+                 ON tr.route_id = r.id WHERE YEARWEEK(DATE(tr.`created_at`)) =  YEARWEEK(CURDATE()) GROUP By DATE(tr.`created_at`) ) v   RIGHT JOIN
+                (SELECT SUM(`versement`.`amount`) AS totalVers, DATE(`versement`.`created_at`) As
+                versDate FROM `versement` WHERE YEARWEEK(DATE(`versement`.`created_at`)) =  YEARWEEK(CURDATE()) GROUP By DATE(`versement`.`created_at`) ) x 
+                ON v.creationDate = x.versDate';
+                
                 $title = 'Ths Week';
             }else{
-                $sql = '
-                SELECT SUM(e.amount) AS total FROM `transaction` e INNER JOIN `route` r ON
-                e.route_id = r.id
-                WHERE r.vehicle_id=:vehicleId';
+                
                 $title = 'All';
             }
            
         //die(var_dump($dql_sum));
-        $resultSet = $conn->executeQuery($sql, ['vehicleId' => $v->getId()]);
+        $resultSet = $conn->executeQuery($sql, []);
         $res = $resultSet->fetchAllAssociative();
+
+        //dd($res);
         $total = 0;
-        if($res[0]["total"] != null){
+        /*if($res[0]["total"] != null){
             $total = $res[0]["total"];
 
+        }*/
+        $creationDate = "";
+        $somme = 0;
+        $totalVers = 0;
+        if($res){
+        foreach($res as $r){
+            $total = $r['total'] ?  (int) $r['total'] : 0;
+            $creationDate = $r['creationDate'] ?  $r['creationDate'] : $r['versDate'];
+            $totalVers = $r['totalVers'] ?  (int) $r['totalVers'] : 0;
+            $somme = $r['somme'];
+            
+            array_push($arraysChart,[$creationDate,$totalVers,$somme,$total]);
+
         }
-        array_push($arraysChart,[$v->getName(),$total]);
+    }else{
+    
+        $total =  0;
+            $creationDate = '';
+            $totalVers =0;
+            $somme = 0;
+            
+            array_push($arraysChart,[$creationDate,$totalVers,$somme,$total]);
         }
+       
+        
         //array_push($arraysChart,["mazda11",5000]);
-        $chart = new \CMEN\GoogleChartsBundle\GoogleCharts\Charts\BarChart();
+        $chart = new \CMEN\GoogleChartsBundle\GoogleCharts\Charts\LineChart();
         $chart->getData()->setArrayToDataTable($arraysChart);
-        $chart->getOptions()->setTitle('Transactions par vehicule');
-        $chart->getOptions()->getHAxis()->setTitle('Total');
-        $chart->getOptions()->getHAxis()->setMinValue(0);
-        $chart->getOptions()->getVAxis()->setTitle('Vehicule');
+        $chart->getOptions()->setTitle('General view');
         $chart->getOptions()->setWidth(600);
         $chart->getOptions()->setHeight(600);
     }else{
         $vk = $this->em->getRepository(Vehicle::class)->findOneBy(["name"=>$filter_vehicle]);
         if($filter == 'all'){
             if($fromDate != null){
-                
+
                 $sql = '
-                SELECT SUM(e.amount) AS total, DATE(e.created_at) As creationDate FROM `transaction` e INNER JOIN `route` r ON
-                e.route_id = r.id
-                WHERE (DATE(e.created_at) between DATE(:dateFrom) AND DATE(:dateTo)) AND r.vehicle_id=:vehicleId';
-                $title = 'for '. $vk->getName().' - From '.$fromDate.' to '.$todate.' -' ;
+            SELECT *, (v.total + IFNULL(x.totalVers,0)) As somme FROM (SELECT SUM(IFNULL(tr.`amount`,0)) 
+            As total, DATE(tr.`created_at`) As creationDate FROM `transaction` tr INNER JOIN `route` r 
+            ON tr.route_id = r.id WHERE r.vehicle_id=:vehicleId AND (DATE(tr.created_at) between DATE(:dateFrom) AND DATE(:dateTo)) GROUP By DATE(tr.`created_at`) ) v   LEFT JOIN
+            (SELECT SUM(`versement`.`amount`) AS totalVers, DATE(`versement`.`created_at`) As
+            versDate FROM `versement` WHERE `versement`.vehicle_id=:vehicleId AND (DATE(`versement`.created_at) between DATE(:dateFrom) AND DATE(:dateTo)) GROUP By DATE(`versement`.`created_at`) )
+            x ON v.creationDate = x.versDate
+            UNION SELECT *, (IFNULL(v.total,0) + x.totalVers) As somme FROM (SELECT SUM(IFNULL(tr.`amount`,0))
+             As total, DATE(tr.`created_at`) As creationDate FROM `transaction` tr INNER JOIN `route` r 
+             ON tr.route_id = r.id WHERE r.vehicle_id=:vehicleId AND (DATE(tr.created_at) between DATE(:dateFrom) AND DATE(:dateTo)) GROUP By DATE(tr.`created_at`) ) v   RIGHT JOIN
+            (SELECT SUM(`versement`.`amount`) AS totalVers, DATE(`versement`.`created_at`) As
+            versDate FROM `versement` WHERE `versement`.vehicle_id=:vehicleId AND (DATE(`versement`.created_at) between DATE(:dateFrom) AND DATE(:dateTo)) GROUP By DATE(`versement`.`created_at`) ) x 
+            ON v.creationDate = x.versDate';
+                
+               $title = 'for '. $vk->getName().' - From '.$fromDate.' to '.$todate.' -' ;
                 $resultSet = $conn->executeQuery($sql, ['vehicleId' => $vk->getId(), 'dateFrom'=>$fromDate, 'dateTo'=>$todate]);
             }else{
                 $sql = '
-                SELECT SUM(e.amount) AS total, DATE(e.created_at) As creationDate FROM `transaction` e INNER JOIN `route` r ON
-                e.route_id = r.id
-                WHERE r.vehicle_id=:vehicleId';
-                $title = 'for '. $vk->getName().' - All -';
+            SELECT *, (v.total + IFNULL(x.totalVers,0)) As somme FROM (SELECT SUM(IFNULL(tr.`amount`,0)) 
+            As total, DATE(tr.`created_at`) As creationDate FROM `transaction` tr INNER JOIN `route` r 
+            ON tr.route_id = r.id WHERE r.vehicle_id=:vehicleId GROUP By DATE(tr.`created_at`) ) v   LEFT JOIN
+            (SELECT SUM(`versement`.`amount`) AS totalVers, DATE(`versement`.`created_at`) As
+            versDate FROM `versement` WHERE `versement`.vehicle_id=:vehicleId GROUP By DATE(`versement`.`created_at`) )
+            x ON v.creationDate = x.versDate
+            UNION SELECT *, (IFNULL(v.total,0) + x.totalVers) As somme FROM (SELECT SUM(IFNULL(tr.`amount`,0))
+             As total, DATE(tr.`created_at`) As creationDate FROM `transaction` tr INNER JOIN `route` r 
+             ON tr.route_id = r.id WHERE r.vehicle_id=:vehicleId GROUP By DATE(tr.`created_at`) ) v   RIGHT JOIN
+            (SELECT SUM(`versement`.`amount`) AS totalVers, DATE(`versement`.`created_at`) As
+            versDate FROM `versement` WHERE `versement`.vehicle_id=:vehicleId GROUP By DATE(`versement`.`created_at`) ) x 
+            ON v.creationDate = x.versDate';
+                
+                $title = 'for '. $vk->getName().'';
                 $resultSet = $conn->executeQuery($sql, ['vehicleId' => $vk->getId()]);
             }
 
         }else{
             if($filter == 'today'){
-                $sql = '
-                SELECT SUM(e.amount) AS total, DATE(e.created_at) As creationDate FROM `transaction` e INNER JOIN `route` r ON
-                e.route_id = r.id
-                WHERE DATE(e.created_at) =  CURDATE() AND r.vehicle_id=:vehicleId';
+                $sql =    '
+            SELECT *, (v.total + IFNULL(x.totalVers,0)) As somme FROM (SELECT SUM(IFNULL(tr.`amount`,0)) 
+            As total, DATE(tr.`created_at`) As creationDate FROM `transaction` tr INNER JOIN `route` r 
+            ON tr.route_id = r.id WHERE DATE(tr.`created_at`) =  CURDATE() AND r.vehicle_id=:vehicleId  GROUP By DATE(tr.`created_at`) ) v   LEFT JOIN
+            (SELECT SUM(`versement`.`amount`) AS totalVers, DATE(`versement`.`created_at`) As
+            versDate FROM `versement` WHERE  DATE(`versement`.`created_at`) =  CURDATE() AND `versement`.vehicle_id=:vehicleId GROUP By DATE(`versement`.`created_at`) )
+            x ON v.creationDate = x.versDate
+            UNION SELECT *, (IFNULL(v.total,0) + x.totalVers) As somme FROM (SELECT SUM(IFNULL(tr.`amount`,0))
+             As total, DATE(tr.`created_at`) As creationDate FROM `transaction` tr INNER JOIN `route` r 
+             ON tr.route_id = r.id WHERE DATE(tr.`created_at`) =  CURDATE() AND r.vehicle_id=:vehicleId GROUP By DATE(tr.`created_at`) ) v   RIGHT JOIN
+            (SELECT SUM(`versement`.`amount`) AS totalVers, DATE(`versement`.`created_at`) As
+            versDate FROM `versement` WHERE DATE(`versement`.`created_at`) =  CURDATE() AND `versement`.vehicle_id=:vehicleId GROUP By DATE(`versement`.`created_at`) ) x 
+            ON v.creationDate = x.versDate';
                 
                 $title = 'for '. $vk->getName().' - Today -';
 
             }else if($filter == 'thismonth'){
+                $sql ='
+            SELECT *, (v.total + IFNULL(x.totalVers,0)) As somme FROM (SELECT SUM(IFNULL(tr.`amount`,0)) 
+            As total, DATE(tr.`created_at`) As creationDate FROM `transaction` tr INNER JOIN `route` r 
+            ON tr.route_id = r.id WHERE MONTH(DATE(tr.`created_at`)) =  MONTH(CURDATE()) AND r.vehicle_id=:vehicleId  GROUP By DATE(tr.`created_at`) ) v   LEFT JOIN
+            (SELECT SUM(`versement`.`amount`) AS totalVers, DATE(`versement`.`created_at`) As
+            versDate FROM `versement` WHERE MONTH(DATE(`versement`.`created_at`)) =  MONTH(CURDATE()) AND `versement`.vehicle_id=:vehicleId GROUP By DATE(`versement`.`created_at`) )
+            x ON v.creationDate = x.versDate
+            UNION SELECT *, (IFNULL(v.total,0) + x.totalVers) As somme FROM (SELECT SUM(IFNULL(tr.`amount`,0))
+             As total, DATE(tr.`created_at`) As creationDate FROM `transaction` tr INNER JOIN `route` r 
+             ON tr.route_id = r.id WHERE MONTH(DATE(tr.`created_at`)) =  MONTH(CURDATE()) AND r.vehicle_id=:vehicleId GROUP By DATE(tr.`created_at`) ) v   RIGHT JOIN
+            (SELECT SUM(`versement`.`amount`) AS totalVers, DATE(`versement`.`created_at`) As
+            versDate FROM `versement` WHERE MONTH(DATE(`versement`.`created_at`)) =  MONTH(CURDATE()) AND `versement`.vehicle_id=:vehicleId GROUP By DATE(`versement`.`created_at`) ) x 
+            ON v.creationDate = x.versDate';
                 $sql = '
                 SELECT SUM(e.amount) AS total, DATE(e.created_at) As creationDate FROM `transaction` e INNER JOIN `route` r ON
                 e.route_id = r.id
@@ -146,10 +250,19 @@ class AdminChartController extends AbstractController
                 
                 $title = 'for '. $vk->getName().' - This Month -';
             }else if($filter == 'thisweek'){
-                $sql = '
-                SELECT SUM(e.amount) AS total, DATE(e.created_at) As creationDate FROM `transaction` e INNER JOIN `route` r ON
-                e.route_id = r.id
-                WHERE YEARWEEK(DATE(e.created_at)) =  YEARWEEK(CURDATE()) AND r.vehicle_id=:vehicleId';
+                $sql ='
+                SELECT *, (v.total + IFNULL(x.totalVers,0)) As somme FROM (SELECT SUM(IFNULL(tr.`amount`,0)) 
+                As total, DATE(tr.`created_at`) As creationDate FROM `transaction` tr INNER JOIN `route` r 
+                ON tr.route_id = r.id WHERE YEARWEEK(DATE(tr.`created_at`)) =  YEARWEEK(CURDATE()) AND r.vehicle_id=:vehicleId  GROUP By DATE(tr.`created_at`) ) v   LEFT JOIN
+                (SELECT SUM(`versement`.`amount`) AS totalVers, DATE(`versement`.`created_at`) As
+                versDate FROM `versement` WHERE YEARWEEK(DATE(`versement`.`created_at`)) =  YEARWEEK(CURDATE()) AND `versement`.vehicle_id=:vehicleId GROUP By DATE(`versement`.`created_at`) )
+                x ON v.creationDate = x.versDate
+                UNION SELECT *, (IFNULL(v.total,0) + x.totalVers) As somme FROM (SELECT SUM(IFNULL(tr.`amount`,0))
+                 As total, DATE(tr.`created_at`) As creationDate FROM `transaction` tr INNER JOIN `route` r 
+                 ON tr.route_id = r.id WHERE YEARWEEK(DATE(tr.`created_at`)) =  YEARWEEK(CURDATE()) AND r.vehicle_id=:vehicleId GROUP By DATE(tr.`created_at`) ) v   RIGHT JOIN
+                (SELECT SUM(`versement`.`amount`) AS totalVers, DATE(`versement`.`created_at`) As
+                versDate FROM `versement` WHERE YEARWEEK(DATE(`versement`.`created_at`)) =  YEARWEEK(CURDATE()) AND `versement`.vehicle_id=:vehicleId GROUP By DATE(`versement`.`created_at`) ) x 
+                ON v.creationDate = x.versDate';
                 
                 $title = 'for '. $vk->getFullname().'- This Week -';
             }else{
@@ -166,36 +279,47 @@ class AdminChartController extends AbstractController
        
     //die(var_dump($dql_sum));
     
+    
     $res = $resultSet->fetchAllAssociative();
-    /*$total = 0;
-    if($res[0]["total"] != null){
+    $total = 0;
+    /*if($res[0]["total"] != null){
         $total = $res[0]["total"];
 
     }*/
+    $creationDate = "";
+    $somme = 0;
+    $totalVers = 0;
+    //dd($res);
     if($res){
     foreach($res as $r){
-        
-            array_push($arraysChart2,[$r["creationDate"],$r["total"]]);
-       
-    }
-    }
-     //array_push($arraysChart,["mazda11",5000]);
-     $chart = new \CMEN\GoogleChartsBundle\GoogleCharts\Charts\BarChart();
-     $chart->getData()->setArrayToDataTable($arraysChart2);
-     $chart->getOptions()->setTitle('Transaction par vehicule');
-     $chart->getOptions()->getHAxis()->setTitle('Total');
-     $chart->getOptions()->getVAxis()->setMinValue(0);
-     $chart->getOptions()->getVAxis()->setTitle('Date');
-     $chart->getOptions()->setWidth(600);
-     $chart->getOptions()->setHeight(600);
-    
-    }
+        $total = $r['total'] ?  (int) $r['total'] : 0;
+        $creationDate = $r['creationDate'] != null ?  $r['creationDate'] :  $r['versDate'];
+        $totalVers = $r['totalVers'] ?  (int) $r['totalVers'] : 0;
+        $somme = $r['somme'];
         
         
-              
-               
+        array_push($arraysChart,[$creationDate,$totalVers,$somme,$total]);
 
+    }
+}else{
     
+        $total =  0;
+            $creationDate = '';
+            $totalVers =0;
+            $somme = 0;
+            
+            array_push($arraysChart,[$creationDate,$totalVers,$somme,$total]);
+}
+    
+    //array_push($arraysChart,["mazda11",5000]);
+    $chart = new \CMEN\GoogleChartsBundle\GoogleCharts\Charts\LineChart();
+    $chart->getData()->setArrayToDataTable($arraysChart);
+    $chart->getOptions()->setTitle('General view');
+    $chart->getOptions()->setWidth(600);
+    $chart->getOptions()->setHeight(600);
+    
+    }
+        
         //return $this->render('AppBundle::index.html.twig', array('piechart' => $pieChart));
         return $this->render('admin_chart/index.html.twig', [
             'controller_name' => 'AdminChartController',

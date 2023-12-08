@@ -49,8 +49,6 @@ final class RechargeCarteAdmin extends AbstractAdmin{
         $datagrid->add('amount');
         $datagrid->add('createdAt');
         $datagrid->add('createdBy');
-        
-        
     
     }
 
@@ -62,6 +60,8 @@ final class RechargeCarteAdmin extends AbstractAdmin{
         $list->add('card.uid');
         $list->add('amount');
         $list->add('createdAt');
+        $list->add('oldBalance');
+        $list->add('newBalance');
         $list->add('createdBy');
 
         
@@ -74,6 +74,8 @@ final class RechargeCarteAdmin extends AbstractAdmin{
         $show->add('amount');
         $show->add('createdAt');
         $show->add('createdBy');
+        $show->add('oldBalance');
+        $show->add('newBalance');
 
 
     }

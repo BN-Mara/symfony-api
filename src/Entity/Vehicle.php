@@ -77,6 +77,12 @@ class Vehicle
     #[ORM\OneToMany(mappedBy: 'vehicle', targetEntity: Alert::class)]
     private Collection $alerts;
 
+    #[ORM\Column(type: Types::ARRAY, nullable: true)]
+    private ?array $gpx = null;
+
+    #[ORM\OneToMany(mappedBy: 'vehicle', targetEntity: VehicleTracker::class)]
+    private Collection $vehicleTrackers;
+
     public function __construct()
     {
         $this->routes = new ArrayCollection();
@@ -85,6 +91,7 @@ class Vehicle
         $this->carburants = new ArrayCollection();
         $this->versements = new ArrayCollection();
         $this->alerts = new ArrayCollection();
+        $this->vehicleTrackers = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -428,6 +435,48 @@ class Vehicle
            // set the owning side to null (unless already changed)
            if ($alert->getVehicle() === $this) {
                $alert->setVehicle(null);
+           }
+       }
+
+       return $this;
+   }
+
+   public function getGpx(): ?array
+   {
+       return $this->gpx;
+   }
+
+   public function setGpx(?array $gpx): static
+   {
+       $this->gpx = $gpx;
+
+       return $this;
+   }
+
+   /**
+    * @return Collection<int, VehicleTracker>
+    */
+   public function getVehicleTrackers(): Collection
+   {
+       return $this->vehicleTrackers;
+   }
+
+   public function addVehicleTracker(VehicleTracker $vehicleTracker): static
+   {
+       if (!$this->vehicleTrackers->contains($vehicleTracker)) {
+           $this->vehicleTrackers->add($vehicleTracker);
+           $vehicleTracker->setVehicle($this);
+       }
+
+       return $this;
+   }
+
+   public function removeVehicleTracker(VehicleTracker $vehicleTracker): static
+   {
+       if ($this->vehicleTrackers->removeElement($vehicleTracker)) {
+           // set the owning side to null (unless already changed)
+           if ($vehicleTracker->getVehicle() === $this) {
+               $vehicleTracker->setVehicle(null);
            }
        }
 

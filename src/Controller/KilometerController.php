@@ -44,10 +44,7 @@ class KilometerController extends AbstractController
         $this->em->persist($kt);
         $this->em->flush();
 
-        return $this->json(["satatus"=>true,"message"=>"kilométrage ajouté avec succès"]);
-
-
-
-       
+        return $this->json(["satatus"=>true,"message"=>"kilométrage ajouté avec succès"]);  
     }
+    
 }

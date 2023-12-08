@@ -41,6 +41,7 @@ class TransactionController extends AbstractController
 
             }
             $rest = $card->getBalance() - $amount;
+            $bal = $card->getBalance();
             if($rest < 0){
                 return $this->json(["status"=>false,"message"=>"Votre balance est insufisante."],400);
             }
@@ -51,6 +52,8 @@ class TransactionController extends AbstractController
             $trans->setAmount($amount);
             $trans->setCard($card);
             $trans->setRoute($route);
+            $trans->setOldBalance($bal);
+            $trans->setNewBalance($rest);
             $this->em->persist($trans);
             $this->em->flush();
             return $this->json(["status"=>true,"message"=>"Paiement effectue avec succes"]);
@@ -80,10 +83,12 @@ class TransactionController extends AbstractController
 
             }
             $rest = $user->getBalance() - $amount;
+            
             if($rest < 0){
                 return $this->json(["status"=>false,"message"=>"Votre balance est insufisante."],400);
             }
             $date = new \DateTime('now',new \DateTimeZone('Africa/Kinshasa'));
+            $bal = $card->getBalance();
             $card->setBalance($card->getBalance() + $amount);
             $card->setUpdatedAt($date);
             $user->setBalance($rest);
@@ -94,6 +99,8 @@ class TransactionController extends AbstractController
             $trans->setCard($card);
             $trans->setCreatedBy($user->getUsername());
             $trans->setCreatedAt($date);
+            $trans->setOldBalance($bal);
+            $trans->setNewBalance($card->getBalance() + $amount);
             //$trans->setRouteId($routeId);
             $this->em->persist($trans);
             $this->em->flush();

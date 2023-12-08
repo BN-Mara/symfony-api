@@ -43,6 +43,8 @@ final class TransactionAdmin extends AbstractAdmin{
         $datagrid->add('createdAt');
         $datagrid->add('route.vehicle.name');
         $datagrid->add('route.vehicle.matricule');
+        $datagrid->add('oldBalance');
+        $datagrid->add('newBalance');
 
     
     }
@@ -52,9 +54,10 @@ final class TransactionAdmin extends AbstractAdmin{
         
         
         $list->addIdentifier('card.uid');
-
         $list->addIdentifier('amount');
         $list->addIdentifier('createdAt');
+        $list->add('oldBalance');
+        $list->add('newBalance');
         $list->addIdentifier('route.vehicle.name');
 
         
@@ -67,6 +70,8 @@ final class TransactionAdmin extends AbstractAdmin{
         $show->add('amount');
         $show->add('route.vehicle.name');
         $show->add('createdAt');
+        $show->add('oldBalance');
+        $show->add('newBalance');
 
     }
     public function prePersist(object $user): void

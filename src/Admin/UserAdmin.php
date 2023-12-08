@@ -121,7 +121,7 @@ final class UserAdmin extends AbstractAdmin{
         $list->addIdentifier('roles');
         $list->addIdentifier('isActive');
         $list->addIdentifier('tagUid');
-        $list->addIdentifier('balance');
+        
         
 
         
