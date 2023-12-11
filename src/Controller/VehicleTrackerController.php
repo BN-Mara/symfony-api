@@ -43,7 +43,7 @@ class VehicleTrackerController extends AbstractController
             $vt->setVehicle($car);
             $this->em->persist($vt);
             $this->em->flush();
-            return $this->json([$car]);
+            return $this->json($car);
         }
         return $this->json(["success"=>false, "message"=>"Some fields are missing."],400);
         
