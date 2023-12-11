@@ -45,7 +45,7 @@ class MapViewController extends AbstractController
         $data = array();
         foreach($vehicles as $v){
             $sql = '
-            SELECT SUM(e.ticket_price) AS total FROM `route` e 
+            SELECT SUM(e.ticket_price * e.passengers) AS total FROM `route` e 
             WHERE DATE(e.starting_time) =  CURDATE() AND e.vehicle_id=:vehicleId';
         //die(var_dump($dql_sum));
         $resultSet = $conn->executeQuery($sql, ['vehicleId' => $v->getId()]);
@@ -147,11 +147,10 @@ class MapViewController extends AbstractController
         $v = $this->em->getRepository(Vehicle::class)->findOneBy(["name"=>$name]);
         $rts = array();
         if($v){
-            $routes = $v->getRoutes();
-            foreach($routes as $r){
-                array_push($rts,["slat"=>$r->getStartLat(),
-                 "slng"=>$r->getStartLng(), "elat"=>$r->getEndLat(),
-                 "elng"=>$r->getEndLng(), "origine"=>$r->getOrigine(), "destination"=>$r->getDestination()]);
+            $tracks = $v->getVehicleTrackers();
+            foreach($tracks as $r){
+                array_push($rts,["lat"=>$r->getLat(),
+                 "lng"=>$r->getLng(),]);
             }
         }
 

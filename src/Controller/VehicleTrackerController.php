@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Alert;
 use App\Entity\Vehicle;
 use App\Entity\VehicleTracker;
 use Doctrine\ORM\EntityManagerInterface;
@@ -45,5 +46,36 @@ class VehicleTrackerController extends AbstractController
         }
         return $this->json(["success"=>false, "message"=>"Some fields are missing."],400);
         
+    }
+
+    #[Route('/alert/update', methods:'POST', name: 'app_map_alert_update')]
+    public function updateAlert(Request $request): Response
+    {
+        $id = $request->request->get('id');
+        $alert = $this->em->getRepository(Alert::class)->find($id);
+        $alert->setIsSeen(true);
+        $this->em->flush();
+        
+       return $this->json(["success"=>true,"message"=>"Alert updated!"],200);
+      
+    }
+    #[Route('/alert/send', methods:'POST', name: 'app_map_alert_update')]
+    public function sendAlert(Request $request): Response
+    {
+        $decoded = json_decode($request->getContent());
+        $v = $this->em->getRepository(Vehicle::class)->find($decoded->vehicleId);
+        if($v){
+            $alert = new Alert();
+            $alert->setDescription($decoded->description);
+            $alert->setTitle($decoded->title);
+            $alert->setVehicle($v);
+            $alert->setIsSeen(false);
+            $this->em->persist($alert);
+            $this->em->flush();
+            return $this->json(["success"=>true,"message"=>"Alert sent!"],200);
+        }
+        else{
+            return $this->json(["sucess"=>false, "message"=>"Vehicle not found!"],400);
+        }
     }
 }

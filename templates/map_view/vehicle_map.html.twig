@@ -38,11 +38,9 @@ function setMarkers(vehs){
               var ar = "";
               
                 var content = '<div>' +
-                    '<table class="table table-striped"><tr><td><span>Start:</span> </td><td><span>' + vehs[count].slat+','+vehs[count].slng + '</span></td></tr>' +
+                    '<table class="table table-striped"><tr><td><span>Start:</span> </td><td><span>' + vehs[count].lat+','+vehs[count].lng + '</span></td></tr>' +
                     ar +
-                    '<tr><td><span>End:</span> </td><td><span>' + vehs[count].elat+','+vehs[count].elng + '</span></td></tr>'+
-                    '<tr><td><span> Origine: </span> </td><td><span>' + vehs[count].origine+ '</span></td></tr>' +
-                    '<tr><td><span> Destination: </span> </td><td><span>' + vehs[count].destination + '</span></td></tr>' +                 
+                  
                     '</table>';
                     
                     
@@ -56,11 +54,8 @@ var infoFn2 = function (count) {
               var ar = "";
               
                 var content = '<div>' +
-                    '<table class="table table-striped"><tr><td><span>Start:</span> </td><td><span>' + vehs[count].slat+','+vehs[count].slng + '</span></td></tr>' +
+                    '<table class="table table-striped"><tr><td><span>Start:</span> </td><td><span>' + vehs[count].lat+','+vehs[count].lng + '</span></td></tr>' +
                     ar +
-                    '<tr><td><span>End:</span> </td><td><span>' + vehs[count].elat+','+vehs[count].elng + '</span></td></tr>'+
-                    '<tr><td><span> Origine: </span> </td><td><span>' + vehs[count].origine+ '</span></td></tr>' +
-                    '<tr><td><span> Destination: </span> </td><td><span>' + vehs[count].destination + '</span></td></tr>' +                 
                     '</table>';
                     
                     
@@ -71,22 +66,22 @@ var infoFn2 = function (count) {
         };
         for (let i = 0; i < vehs.length; i++){
           /*const image =
-          "{{  app.request.schemeAndHttpHost }}"+"/images/"+vehs[i].color;*/
+          "{#{  app.request.schemeAndHttpHost }#}"+"/images/"+vehs[i].color;*/
       
         const marker = new google.maps.Marker({
           map,
-          position: new google.maps.LatLng(vehs[i].slat, vehs[i].slng),
+          position: new google.maps.LatLng(vehs[i].lat, vehs[i].lng),
           //icon: image,
           //animation: google.maps.Animation.DROP,
           title: vehs[i].origine,
         });
-        const marker2 = new google.maps.Marker({
+        /*const marker2 = new google.maps.Marker({
           map,
-          position: new google.maps.LatLng(vehs[i].elat, vehs[i].elng),
+          position: new google.maps.LatLng(vehs[i].lat, vehs[i].lng),
           //icon: image,
           //animation: google.maps.Animation.DROP,
           title: vehs[i].destination,
-        });
+        });*/
       
         /*const marker = new google.maps.Marker({
           position: new google.maps.LatLng(vehs[i].lat, vehs[i].lng),
@@ -97,9 +92,9 @@ var infoFn2 = function (count) {
             });*/
           // Add a click listener for each marker, and set up the info window.
           let fn = infoFn(i);
-          let fn2 = infoFn2(i);
+          //let fn2 = infoFn2(i);
           google.maps.event.addListener(marker, 'click', fn);
-          google.maps.event.addListener(marker2, 'click', fn2);
+          //google.maps.event.addListener(marker2, 'click', fn2);
           //arrayMarkers[i] = marker;
             
         }
