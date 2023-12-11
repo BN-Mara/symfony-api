@@ -36,13 +36,14 @@ class VehicleTrackerController extends AbstractController
         if($car){
             $car->setCurrentLat($currentLat);
             $car->setCurrentLng($currentLng);
-            $this->em->persist($car);
+            //$this->em->persist($car);
             $vt = new VehicleTracker();
             $vt->setLat($currentLat);
             $vt->setLng($currentLng);
+            $vt->setVehicle($car);
             $this->em->persist($vt);
             $this->em->flush();
-            return $this->json([$vt]);
+            return $this->json([$car]);
         }
         return $this->json(["success"=>false, "message"=>"Some fields are missing."],400);
         
