@@ -79,4 +79,15 @@ class VehicleTrackerController extends AbstractController
             return $this->json(["sucess"=>false, "message"=>"Vehicle not found!"],400);
         }
     }
+    #[Route('/api/alert/resume/{id}', methods:'GET', name: 'app_alert_resume_app')]
+    public function resumeAlert($id): Response
+    {
+        $sql = '
+        UPDATE `alert` SET is_seen = true WHERE vehicle_id = :id AND title = :title
+        ';
+        $conn = $this->em->getConnection();
+        $resultSet = $conn->executeQuery($sql, ['id'=>$id,'title'=>'App closed']);
+        $this->em->flush();
+        return $this->json(["success"=>true,"message"=>"Alert updated!"],200);
+    }
 }

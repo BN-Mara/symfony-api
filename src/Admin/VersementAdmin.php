@@ -57,10 +57,7 @@ final class VersementAdmin extends AbstractAdmin{
         $datagrid->add('amount');
         $datagrid->add('createdAt');
         $datagrid->add('driver.username');
-        
-        
 
-    
     }
 
     protected function configureListFields(ListMapper $list): void
