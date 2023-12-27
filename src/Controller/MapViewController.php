@@ -121,7 +121,7 @@ class MapViewController extends AbstractController
               
                 ]);
 
-            } 
+            }
 
         }
 
@@ -129,16 +129,14 @@ class MapViewController extends AbstractController
 
     }
 
-    #[Route('/admin/map/alert/update', methods:'POST', name: 'app_map_alert_update')]
+    #[Route('/admin/map/alert/update', methods:'POST', name: 'admin_map_alert_update')]
     public function updateAlert(Request $request): Response
     {
         $id = $request->request->get('id');
         $alert = $this->em->getRepository(Alert::class)->find($id);
         $alert->setIsSeen(true);
         $this->em->flush();
-        
        return $this->json(["success"=>true,"message"=>"Alert updated!"],200);
-      
     }
     #[Route('/admin/map/one', name: 'app_map_vehicle')]
     public function mapView(Request $request): Response
@@ -146,11 +144,14 @@ class MapViewController extends AbstractController
         $name = $request->query->get('vehicle');
         $v = $this->em->getRepository(Vehicle::class)->findOneBy(["name"=>$name]);
         $rts = array();
+        
         if($v){
             $tracks = $v->getVehicleTrackers();
+            
             foreach($tracks as $r){
+                //dd($r->getCreatedAt()->format('d-m-y H:i:s'));
                 array_push($rts,["lat"=>$r->getLat(),
-                 "lng"=>$r->getLng(),]);
+                 "lng"=>$r->getLng(), "time"=>$r->getCreatedAt()->format('d-m-Y H:i:s')]);
             }
         }
 

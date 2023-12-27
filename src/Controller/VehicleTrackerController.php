@@ -60,7 +60,7 @@ class VehicleTrackerController extends AbstractController
        return $this->json(["success"=>true,"message"=>"Alert updated!"],200);
       
     }
-    #[Route('/alert/send', methods:'POST', name: 'app_map_alert_update')]
+    #[Route('/alert/send', methods:'POST', name: 'app_map_alert_send')]
     public function sendAlert(Request $request): Response
     {
         $decoded = json_decode($request->getContent());

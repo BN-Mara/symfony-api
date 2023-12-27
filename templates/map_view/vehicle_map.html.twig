@@ -39,6 +39,7 @@ function setMarkers(vehs){
               
                 var content = '<div>' +
                     '<table class="table table-striped"><tr><td><span>Start:</span> </td><td><span>' + vehs[count].lat+','+vehs[count].lng + '</span></td></tr>' +
+                    '<tr><td><span>Time:</span> </td><td><span>' + vehs[count].time + '</span></td></tr>' +
                     ar +
                   
                     '</table>';
@@ -46,7 +47,7 @@ function setMarkers(vehs){
                     
                 infowindow.setContent(content);
                 infowindow.open(map);
-                infowindow.setPosition(new google.maps.LatLng(vehs[count].slat, vehs[count].slng));
+                infowindow.setPosition(new google.maps.LatLng(vehs[count].lat, vehs[count].lng));
             }
         };
 var infoFn2 = function (count) {
@@ -54,7 +55,8 @@ var infoFn2 = function (count) {
               var ar = "";
               
                 var content = '<div>' +
-                    '<table class="table table-striped"><tr><td><span>Start:</span> </td><td><span>' + vehs[count].lat+','+vehs[count].lng + '</span></td></tr>' +
+                    '<table class="table table-striped"><tr><td><span>Location:</span> </td><td><span>' + vehs[count].lat+','+vehs[count].lng + '</span></td></tr>' +
+                    '<tr><td><span>Time:</span> </td><td><span>' + vehs[count].time + '</span></td></tr>' +
                     ar +
                     '</table>';
                 infowindow.setContent(content);
@@ -66,33 +68,18 @@ var infoFn2 = function (count) {
           /*const image =
           "{#{  app.request.schemeAndHttpHost }#}"+"/images/"+vehs[i].color;*/
       
-        const marker = new google.maps.Marker({
+          const marker = new google.maps.Marker({
           map,
           position: new google.maps.LatLng(vehs[i].lat, vehs[i].lng),
           //icon: image,
           //animation: google.maps.Animation.DROP,
           title: vehs[i].origine,
-        });
-        /*const marker2 = new google.maps.Marker({
-          map,
-          position: new google.maps.LatLng(vehs[i].lat, vehs[i].lng),
-          //icon: image,
-          //animation: google.maps.Animation.DROP,
-          title: vehs[i].destination,
-        });*/
-        /*const marker = new google.maps.Marker({
-          position: new google.maps.LatLng(vehs[i].lat, vehs[i].lng),
-          map,
-          content: beachFlagImg,
-          title: vehs[i].name,
-          zIndex: vehs[i].id,
-            });*/
-          // Add a click listener for each marker, and set up the info window.
+          });
+          
           let fn = infoFn(i);
-          //let fn2 = infoFn2(i);
+          
           google.maps.event.addListener(marker, 'click', fn);
-          //google.maps.event.addListener(marker2, 'click', fn2);
-          //arrayMarkers[i] = marker;
+         
         }
 
 
@@ -121,6 +108,6 @@ var infoFn2 = function (count) {
 
     </script>
     
-    <script src="https://maps.googleapis.com/maps/api/js?sensor=false&callback=myMap"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDDWnwhTmF5tvW9imeP8IN0UxywOhc_eM4&callback=myMap"></script>
  
     {% endblock %}
