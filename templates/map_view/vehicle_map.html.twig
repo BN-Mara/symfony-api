@@ -38,7 +38,7 @@ function setMarkers(vehs){
               var ar = "";
               
                 var content = '<div>' +
-                    '<table class="table table-striped"><tr><td><span>Start:</span> </td><td><span>' + vehs[count].lat+','+vehs[count].lng + '</span></td></tr>' +
+                    '<table class="table table-striped"><tr><td><span>Location:</span> </td><td><span>' + vehs[count].lat+','+vehs[count].lng + '</span></td></tr>' +
                     '<tr><td><span>Time:</span> </td><td><span>' + vehs[count].time + '</span></td></tr>' +
                     ar +
                   
@@ -93,10 +93,40 @@ var infoFn2 = function (count) {
       var mapOptions = {center: myCenter, zoom: 16};
       var map = new google.maps.Map(mapCanvas, mapOptions);*/
       
+      var myStyles =[
+  {
+    "elementType": "labels",
+    "stylers": [
+      {
+        "visibility": "off"
+      }
+    ]
+  },
+  {
+    "featureType": "administrative.land_parcel",
+    "stylers": [
+      {
+        "visibility": "on"
+      }
+    ]
+  },
+  {
+    "featureType": "administrative.neighborhood",
+    "stylers": [
+      {
+        "visibility": "on"
+      }
+    ]
+  }
+];
+
+
+      
       map = new Map(document.getElementById("map"), {
     center: { lat: -4.340912, lng: 15.314222 },
-    zoom: 16,
-    mapId: "4504f8b37365c3d0",
+    zoom: 14,
+    
+    styles: myStyles
   });
 
   var vehs = JSON.parse('{{ routes | json_encode | raw }}');

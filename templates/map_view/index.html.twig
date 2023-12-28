@@ -96,11 +96,40 @@ function setMarkers(vehs){
       var mapCanvas = document.getElementById("map");
       var mapOptions = {center: myCenter, zoom: 16};
       var map = new google.maps.Map(mapCanvas, mapOptions);*/
+      var myStyles =[
+  {
+    "elementType": "labels",
+    "stylers": [
+      {
+        "visibility": "off"
+      }
+    ]
+  },
+  {
+    "featureType": "administrative.land_parcel",
+    "stylers": [
+      {
+        "visibility": "off"
+      }
+    ]
+  },
+  {
+    "featureType": "administrative.neighborhood",
+    "stylers": [
+      {
+        "visibility": "off"
+      }
+    ]
+  }
+];
+
+
       
       map = new Map(document.getElementById("map"), {
     center: { lat: -4.340912, lng: 15.314222 },
     zoom: 16,
-    mapId: "4504f8b37365c3d0",
+    
+    styles: myStyles
   });
       
   
