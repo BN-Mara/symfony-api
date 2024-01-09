@@ -118,6 +118,7 @@ class TransactionController extends AbstractController
     public function createCard(Request $request): Response
     {
         $by = $this->getUser()->getUserIdentifier();
+        $u = $this->em->getRepository(User::class)->findOneBy(['username'=>$by]);
         $decoded = json_decode($request->getContent());
         $cardUid = $decoded->uid;
         $holder = $decoded->cardHolder;
@@ -134,13 +135,20 @@ class TransactionController extends AbstractController
         $card->setUid($cardUid);
         $card->setCardHolder($holder);
         $card->setPhoneNumber($phoneNumber);
-        if($balance >= 0)
+        
+        if($balance >= 0){
             $card->setBalance($balance);
+
+        }
         else
             $card->setBalance(0);
+        $by_balance = $u->getBalance() - $balance;
+        $u->setBalance($by_balance);
         $card->setIsActive(true);
         $card->setCreatedBy($by);
         $this->em->persist($card);
+        
+        
         $this->em->flush();
         return $this->json(["success"=>true,"message"=>"Carte enregistree avec success"]);
 
