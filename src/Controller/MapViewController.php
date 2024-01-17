@@ -82,14 +82,14 @@ class MapViewController extends AbstractController
            
 
             if($alert){
-                $color = "bus_blue_alert.png";
-                if($v->getRegion()->getId() == 1){
+                $color = "bus_red.png";
+                /*if($v->getRegion()->getId() == 1){
                     $color = "bus_red_alert.png";
                 }else if($v->getRegion()->getId() == 2){
                     $color = "bus_green_alert.png";
                 }else{
                     $color = "bus_blue_alert.png";
-                }
+                }*/
                 array_push($data,["name"=>$v->getName(), "id"=>$v->getMatricule(), 
             "lat"=>$v->getCurrentLat(),"lng"=>$v->getCurrentLng(), "total"=>$total,
               "driver"=>$driver,
@@ -104,7 +104,7 @@ class MapViewController extends AbstractController
             }else{
                 $color = "bus_blue.png";
                 if($v->getRegion()->getId() == 1){
-                    $color = "bus_red.png";
+                    $color = "bus_yellow.png";
                 }else if($v->getRegion()->getId() == 2){
                     $color = "bus_green.png";
                 }else{

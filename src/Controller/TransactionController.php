@@ -135,7 +135,7 @@ class TransactionController extends AbstractController
         $card->setUid($cardUid);
         $card->setCardHolder($holder);
         $card->setPhoneNumber($phoneNumber);
-        
+
         if($balance >= 0){
             $card->setBalance($balance);
 
@@ -147,8 +147,7 @@ class TransactionController extends AbstractController
         $card->setIsActive(true);
         $card->setCreatedBy($by);
         $this->em->persist($card);
-        
-        
+
         $this->em->flush();
         return $this->json(["success"=>true,"message"=>"Carte enregistree avec success"]);
 
