@@ -33,7 +33,10 @@ final class RechargeUserAdmin extends AbstractAdmin{
 
     protected function configureFormFields(FormMapper $form): void
     {
-       
+        if(!$this->isCurrentRoute('create')){
+            return;
+            
+        }
         $form->add('user', EntityType::class,[
             'class' => User::class,
             'choice_label' => 'username',
@@ -101,9 +104,6 @@ final class RechargeUserAdmin extends AbstractAdmin{
             $user->setUpdatedAt(new \DateTime('now',new \DateTimeZone('Africa/Kinshasa')));
             $this->em->flush();
 
-        
-        
-        
     }
 
     public function preUpdate(object $recharge): void
