@@ -28,6 +28,12 @@ class RechargeUser
 
     #[ORM\Column(length: 64, nullable: true)]
     private ?string $createdBy = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?float $oldBalance = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?float $newBalance = null;
     public function __construct()
     {
        
@@ -84,6 +90,30 @@ class RechargeUser
     public function setCreatedBy(?string $createdBy): self
     {
         $this->createdBy = $createdBy;
+
+        return $this;
+    }
+
+    public function getOldBalance(): ?float
+    {
+        return $this->oldBalance;
+    }
+
+    public function setOldBalance(?float $oldBalance): static
+    {
+        $this->oldBalance = $oldBalance;
+
+        return $this;
+    }
+
+    public function getNewBalance(): ?float
+    {
+        return $this->newBalance;
+    }
+
+    public function setNewBalance(?float $newBalance): static
+    {
+        $this->newBalance = $newBalance;
 
         return $this;
     }

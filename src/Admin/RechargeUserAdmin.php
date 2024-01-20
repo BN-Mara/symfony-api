@@ -62,6 +62,8 @@ final class RechargeUserAdmin extends AbstractAdmin{
         
         $list->addIdentifier('user.username');
         $list->addIdentifier('amount');
+        $list->addIdentifier('oldBalance');
+        $list->addIdentifier('newBalance');
         $list->addIdentifier('createdAt');
         $list->add('createdBy');
 
@@ -73,6 +75,8 @@ final class RechargeUserAdmin extends AbstractAdmin{
 
         $show->add('user.username');
         $show->add('amount');
+        $show->add('oldBalance');
+        $show->add('newBalance');
         $show->add('createdAt');
         $show->add('createdBy');
 
@@ -81,12 +85,17 @@ final class RechargeUserAdmin extends AbstractAdmin{
     {
         //$user = $this->em->getRepository(User::class)->findBy(["username"])
         $user = $recharge->getUser();
-        $me = $this->ts->getToken()->getUser();;
+        $me = $this->ts->getToken()->getUser();
         $recharge->setCreatedBy($me->getUsername());
         if($user->getBalance() == null){
             $user->setBalance($recharge->getAmount());
+            $recharge->setOldBalance(0);
+            $recharge->setNewBalance($recharge->getAmount());
         }else{
+
             $user->setBalance($user->getBalance() + $recharge->getAmount());
+            $recharge->setOldBalance($user->getBalance());
+            $recharge->setNewBalance($user->getBalance() + $recharge->getAmount());
         }
             
             $user->setUpdatedAt(new \DateTime('now',new \DateTimeZone('Africa/Kinshasa')));
