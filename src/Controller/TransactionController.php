@@ -100,7 +100,7 @@ class TransactionController extends AbstractController
             $trans->setCreatedBy($user->getUsername());
             $trans->setCreatedAt($date);
             $trans->setOldBalance($bal);
-            $trans->setNewBalance($card->getBalance() + $amount);
+            $trans->setNewBalance($card->getBalance());
             //$trans->setRouteId($routeId);
             $this->em->persist($trans);
             $this->em->flush();
