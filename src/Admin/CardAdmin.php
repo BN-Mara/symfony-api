@@ -40,6 +40,7 @@ final class CardAdmin extends AbstractAdmin{
 
     protected function configureDatagridFilters(DatagridMapper $datagrid): void
     {
+        $datagrid->add('id');
         $datagrid->add('uid');
         $datagrid->add('cardHolder');
         $datagrid->add('phoneNumber');
@@ -52,7 +53,7 @@ final class CardAdmin extends AbstractAdmin{
     protected function configureListFields(ListMapper $list): void
     {
         
-        
+        $list->addIdentifier('id');
         $list->addIdentifier('uid');
         $list->addIdentifier('cardHolder');
         $list->addIdentifier('phoneNumber');
