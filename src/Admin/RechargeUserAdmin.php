@@ -95,10 +95,11 @@ final class RechargeUserAdmin extends AbstractAdmin{
             $recharge->setOldBalance(0);
             $recharge->setNewBalance($recharge->getAmount());
         }else{
+            $recharge->setOldBalance($user->getBalance());
 
             $user->setBalance($user->getBalance() + $recharge->getAmount());
-            $recharge->setOldBalance($user->getBalance());
-            $recharge->setNewBalance($user->getBalance() + $recharge->getAmount());
+            
+            $recharge->setNewBalance($user->getBalance());
         }
             
             $user->setUpdatedAt(new \DateTime('now',new \DateTimeZone('Africa/Kinshasa')));
