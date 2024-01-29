@@ -38,11 +38,12 @@ public function onAuthenticationSuccessResponse(AuthenticationSuccessEvent $even
     $data['isActive'] = $user->isIsActive();
     $data['address'] = $user->getAddress();
     $data['balance']  = $user->getBalance();
+
     if($user->getVehicle()){
     $vh = $user->getVehicle();
     $data['vehicle'] = ["id"=>$vh->getId(),"name"=>$vh->getName(),
     "matricule"=>$vh->getMatricule(),"currentLng"=>$vh->getCurrentLng(),
-    "currentLat"=>$vh->getCurrentLat() ];
+    "currentLat"=>$vh->getCurrentLat(), "region"=>$vh->getRegion()->getName(), "deviceID"=>$vh->getDeviceID() ];
     }
 
     $event->setData($data);
