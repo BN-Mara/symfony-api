@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
 use App\Repository\NfcCardRepository;
+use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
@@ -48,11 +49,24 @@ class NfcCard
     #[ORM\Column(length: 32, nullable: true)]
     private ?string $createdBy = null;
 
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
+    private ?\DateTimeInterface $subscriptionFromDate = null;
+
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
+    private ?\DateTimeInterface $subscriptionEndDate = null;
+
+    #[ORM\Column(length: 6)]
+    private ?string $code = null;
+
+    #[ORM\ManyToMany(targetEntity: Line::class, inversedBy: 'nfccards')]
+    private Collection $liness;
+
     public function __construct()
     {
         $this->transactions = new ArrayCollection();
         $this->createdAt = new \DateTime('now',new \DateTimeZone('Africa/Kinshasa'));
         $this->rechargeCartes = new ArrayCollection();
+        $this->liness = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -214,5 +228,69 @@ class NfcCard
         $this->createdBy = $createdBy;
 
         return $this;
+    }
+
+    public function getSubscriptionFromDate(): ?\DateTimeInterface
+    {
+        return $this->subscriptionFromDate;
+    }
+
+    public function setSubscriptionFromDate(?\DateTimeInterface $subscriptionFromDate): static
+    {
+        $this->subscriptionFromDate = $subscriptionFromDate;
+
+        return $this;
+    }
+
+    public function getSubscriptionEndDate(): ?\DateTimeInterface
+    {
+        return $this->subscriptionEndDate;
+    }
+
+    public function setSubscriptionEndDate(?\DateTimeInterface $subscriptionEndDate): static
+    {
+        $this->subscriptionEndDate = $subscriptionEndDate;
+
+        return $this;
+    }
+
+    public function getCode(): ?string
+    {
+        return $this->code;
+    }
+
+    public function setCode(string $code): static
+    {
+        $this->code = $code;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Line>
+     */
+    public function getLiness(): Collection
+    {
+        return $this->liness;
+    }
+
+    public function addLiness(Line $liness): static
+    {
+        if (!$this->liness->contains($liness)) {
+            $this->liness->add($liness);
+        }
+
+        return $this;
+    }
+
+    public function removeLiness(Line $liness): static
+    {
+        $this->liness->removeElement($liness);
+
+        return $this;
+    }
+    public function isSubscribed():bool{
+        $now =  new \DateTime('now',new \DateTimeZone('Africa/Kinshasa'));
+        return $this->subscriptionFromDate <= $now && $this->subscriptionEndDate >  $now;
     }
 }

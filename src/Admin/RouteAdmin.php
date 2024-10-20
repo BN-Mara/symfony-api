@@ -62,6 +62,7 @@ final class RouteAdmin extends AbstractAdmin{
         $list->addIdentifier('endLat');
         $list->addIdentifier('endLng');
         $list->addIdentifier('passengers');
+        $list->addIdentifier('driverPassengers');
         $list->addIdentifier('startingTime');
         $list->addIdentifier('endingTime');
 
@@ -77,6 +78,7 @@ final class RouteAdmin extends AbstractAdmin{
         $show->add('endLat');
         $show->add('endLng');
         $show->add('passengers');
+        $show->add('driverPassengers');
         $show->add('startingTime');
         $show->add('endingTime');
         

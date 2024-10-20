@@ -29,7 +29,10 @@ class Place
     private ?\DateTimeInterface $createdAt = null;
 
     #[ORM\ManyToOne(inversedBy: 'places')]
-    private ?Region $region = null;
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Line $line = null;
+
+   
 
     public function __construct()
     {
@@ -90,15 +93,17 @@ class Place
         return $this;
     }
 
-    public function getRegion(): ?Region
+    public function getLine(): ?Line
     {
-        return $this->region;
+        return $this->line;
     }
 
-    public function setRegion(?Region $region): self
+    public function setLine(?Line $line): static
     {
-        $this->region = $region;
+        $this->line = $line;
 
         return $this;
     }
+
+
 }

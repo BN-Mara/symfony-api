@@ -44,9 +44,6 @@ class Vehicle
     #[ORM\Column(length: 64, nullable: true)]
     private ?string $deviceID = null;
 
-    #[ORM\ManyToOne(inversedBy: 'vehicles')]
-    private ?Region $region = null;
-
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $voletJaune = null;
 
@@ -82,6 +79,10 @@ class Vehicle
 
     #[ORM\OneToMany(mappedBy: 'vehicle', targetEntity: VehicleTracker::class)]
     private Collection $vehicleTrackers;
+
+    #[ORM\ManyToOne(inversedBy: 'vehicles')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Line $line = null;
 
     public function __construct()
     {
@@ -185,18 +186,6 @@ class Vehicle
     public function setDeviceID(?string $deviceID): self
     {
         $this->deviceID = $deviceID;
-
-        return $this;
-    }
-
-    public function getRegion(): ?Region
-    {
-        return $this->region;
-    }
-
-    public function setRegion(?Region $region): self
-    {
-        $this->region = $region;
 
         return $this;
     }
@@ -479,6 +468,18 @@ class Vehicle
                $vehicleTracker->setVehicle(null);
            }
        }
+
+       return $this;
+   }
+
+   public function getLine(): ?Line
+   {
+       return $this->line;
+   }
+
+   public function setLine(?Line $line): static
+   {
+       $this->line = $line;
 
        return $this;
    }

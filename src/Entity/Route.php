@@ -76,14 +76,22 @@ class Route
     #[ORM\Column(nullable: true)]
     private ?int $driverPassengers = null;
 
+    #[ORM\ManyToOne(inversedBy: 'routes')]
+    private ?Line $line = null;
+
     #[ORM\OneToMany(mappedBy: 'route', targetEntity: Transaction::class)]
-    private Collection $yes;
+    private Collection $transactions;
+
+  
+
+
     public function __construct()
     {
         //$this->cretedAt = new \DateTime('now',new \DateTimeZone('Africa/Kinshasa'));
 
         $this->startingTime = new \DateTime('now',new \DateTimeZone('Africa/Kinshasa'));
-        $this->yes = new ArrayCollection();
+        $this->transactions = new ArrayCollection();
+
         
     }
 
@@ -285,33 +293,47 @@ class Route
         return $this;
     }
 
+    public function getLine(): ?Line
+    {
+        return $this->line;
+    }
+
+    public function setLine(?Line $line): static
+    {
+        $this->line = $line;
+
+        return $this;
+    }
+
     /**
      * @return Collection<int, Transaction>
      */
-    public function getYes(): Collection
+    public function getTransactions(): Collection
     {
-        return $this->yes;
+        return $this->transactions;
     }
 
-    public function addYe(Transaction $ye): self
+    public function addTransaction(Transaction $transaction): static
     {
-        if (!$this->yes->contains($ye)) {
-            $this->yes->add($ye);
-            $ye->setRoute($this);
+        if (!$this->transactions->contains($transaction)) {
+            $this->transactions->add($transaction);
+            $transaction->setRoute($this);
         }
 
         return $this;
     }
 
-    public function removeYe(Transaction $ye): self
+    public function removeTransaction(Transaction $transaction): static
     {
-        if ($this->yes->removeElement($ye)) {
+        if ($this->transactions->removeElement($transaction)) {
             // set the owning side to null (unless already changed)
-            if ($ye->getRoute() === $this) {
-                $ye->setRoute(null);
+            if ($transaction->getRoute() === $this) {
+                $transaction->setRoute(null);
             }
         }
 
         return $this;
     }
+
+
 }

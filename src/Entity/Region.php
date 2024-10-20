@@ -27,21 +27,19 @@ class Region
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     private ?\DateTimeInterface $createdAt = null;
 
-    #[ORM\OneToMany(mappedBy: 'region', targetEntity: Place::class)]
-    private Collection $places;
-
-    #[ORM\OneToMany(mappedBy: 'region', targetEntity: Vehicle::class)]
-    private Collection $vehicles;
-
     #[ORM\OneToMany(mappedBy: 'region', targetEntity: TicketPrice::class)]
     private Collection $ticketPrices;
 
+    #[ORM\OneToMany(mappedBy: 'region', targetEntity: Line::class)]
+    private Collection $liness;
+
     public function __construct()
     {
-        $this->places = new ArrayCollection();
+        
         $this->createdAt = new \DateTime('now',new \DateTimeZone('Africa/Kinshasa'));
-        $this->vehicles = new ArrayCollection();
+        
         $this->ticketPrices = new ArrayCollection();
+        $this->liness = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -86,66 +84,6 @@ class Region
     }
 
     /**
-     * @return Collection<int, Place>
-     */
-    public function getPlaces(): Collection
-    {
-        return $this->places;
-    }
-
-    public function addPlace(Place $place): self
-    {
-        if (!$this->places->contains($place)) {
-            $this->places->add($place);
-            $place->setRegion($this);
-        }
-
-        return $this;
-    }
-
-    public function removePlace(Place $place): self
-    {
-        if ($this->places->removeElement($place)) {
-            // set the owning side to null (unless already changed)
-            if ($place->getRegion() === $this) {
-                $place->setRegion(null);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, Vehicle>
-     */
-    public function getVehicles(): Collection
-    {
-        return $this->vehicles;
-    }
-
-    public function addVehicle(Vehicle $vehicle): self
-    {
-        if (!$this->vehicles->contains($vehicle)) {
-            $this->vehicles->add($vehicle);
-            $vehicle->setRegion($this);
-        }
-
-        return $this;
-    }
-
-    public function removeVehicle(Vehicle $vehicle): self
-    {
-        if ($this->vehicles->removeElement($vehicle)) {
-            // set the owning side to null (unless already changed)
-            if ($vehicle->getRegion() === $this) {
-                $vehicle->setRegion(null);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
      * @return Collection<int, TicketPrice>
      */
     public function getTicketPrices(): Collection
@@ -169,6 +107,36 @@ class Region
             // set the owning side to null (unless already changed)
             if ($ticketPrice->getRegion() === $this) {
                 $ticketPrice->setRegion(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Line>
+     */
+    public function getLiness(): Collection
+    {
+        return $this->liness;
+    }
+
+    public function addLiness(Line $liness): static
+    {
+        if (!$this->liness->contains($liness)) {
+            $this->liness->add($liness);
+            $liness->setRegion($this);
+        }
+
+        return $this;
+    }
+
+    public function removeLiness(Line $liness): static
+    {
+        if ($this->liness->removeElement($liness)) {
+            // set the owning side to null (unless already changed)
+            if ($liness->getRegion() === $this) {
+                $liness->setRegion(null);
             }
         }
 

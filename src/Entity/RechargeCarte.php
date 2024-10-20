@@ -34,6 +34,27 @@ class RechargeCarte
     #[ORM\Column(nullable: true)]
     private ?float $newBalance = null;
 
+    #[ORM\Column(length: 10)]
+    private ?string $rechargeType = null;
+
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
+    private ?\DateTimeInterface $fromDate = null;
+
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
+    private ?\DateTimeInterface $toDate = null;
+
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
+    private ?\DateTimeInterface $oldFromDate = null;
+
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
+    private ?\DateTimeInterface $oldToDate = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?int $subscriptionId = null;
+
+    #[ORM\Column(length: 10)]
+    private ?string $reference = null;
+
     public function __construct()
     {
        
@@ -114,6 +135,90 @@ class RechargeCarte
     public function setNewBalance(?float $newBalance): static
     {
         $this->newBalance = $newBalance;
+
+        return $this;
+    }
+
+    public function getRechargeType(): ?string
+    {
+        return $this->rechargeType;
+    }
+
+    public function setRechargeType(string $rechargeType): static
+    {
+        $this->rechargeType = $rechargeType;
+
+        return $this;
+    }
+
+    public function getFromDate(): ?\DateTimeInterface
+    {
+        return $this->fromDate;
+    }
+
+    public function setFromDate(?\DateTimeInterface $fromDate): static
+    {
+        $this->fromDate = $fromDate;
+
+        return $this;
+    }
+
+    public function getToDate(): ?\DateTimeInterface
+    {
+        return $this->toDate;
+    }
+
+    public function setToDate(?\DateTimeInterface $toDate): static
+    {
+        $this->toDate = $toDate;
+
+        return $this;
+    }
+
+    public function getOldFromDate(): ?\DateTimeInterface
+    {
+        return $this->oldFromDate;
+    }
+
+    public function setOldFromDate(?\DateTimeInterface $oldFromDate): static
+    {
+        $this->oldFromDate = $oldFromDate;
+
+        return $this;
+    }
+
+    public function getOldToDate(): ?\DateTimeInterface
+    {
+        return $this->oldToDate;
+    }
+
+    public function setOldToDate(?\DateTimeInterface $oldToDate): static
+    {
+        $this->oldToDate = $oldToDate;
+
+        return $this;
+    }
+
+    public function getSubscriptionId(): ?int
+    {
+        return $this->subscriptionId;
+    }
+
+    public function setSubscriptionId(?int $subscriptionId): static
+    {
+        $this->subscriptionId = $subscriptionId;
+
+        return $this;
+    }
+
+    public function getReference(): ?string
+    {
+        return $this->reference;
+    }
+
+    public function setReference(string $reference): static
+    {
+        $this->reference = $reference;
 
         return $this;
     }

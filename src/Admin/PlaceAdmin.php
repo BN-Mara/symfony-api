@@ -3,6 +3,7 @@
 namespace App\Admin;
 
 use App\Entity\Competition;
+use App\Entity\Line;
 use App\Entity\Notification;
 use App\Entity\Region;
 use App\Service\NotificationService;
@@ -30,8 +31,8 @@ final class PlaceAdmin extends AbstractAdmin{
 
     protected function configureFormFields(FormMapper $form): void
     {
-        $form->add('region', EntityType::class,[
-            'class' => Region::class,
+        $form->add('Line', EntityType::class,[
+            'class' => Line::class,
             'choice_label' => 'name',
             'multiple' => false,
             'expanded' => false,
@@ -48,7 +49,7 @@ final class PlaceAdmin extends AbstractAdmin{
         $datagrid->add('name');
         $datagrid->add('latitude');
         $datagrid->add('longitude');
-        $datagrid->add('region.name');
+        $datagrid->add('line.name');
         
         
 
@@ -60,7 +61,7 @@ final class PlaceAdmin extends AbstractAdmin{
         
         
         $list->addIdentifier('name');
-        $list->addIdentifier('region.name');
+        $list->addIdentifier('line.name');
         $list->addIdentifier('latitude');
         $list->addIdentifier('longitude');
 
@@ -73,7 +74,7 @@ final class PlaceAdmin extends AbstractAdmin{
         $show->add('latitude');
         $show->add('longitude');
         $show->add('createdAt');
-        $show->add('region.name');
+        $show->add('line.id');
 
     }
     public function prePersist(object $user): void

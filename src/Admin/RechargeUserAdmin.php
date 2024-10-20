@@ -5,6 +5,7 @@ namespace App\Admin;
 use App\Entity\Competition;
 use App\Entity\Notification;
 use App\Entity\User;
+use App\Helper\StringGenerator;
 use App\Service\NotificationService;
 use Doctrine\ORM\EntityManagerInterface;
 use Sonata\AdminBundle\Admin\AbstractAdmin;
@@ -67,8 +68,9 @@ final class RechargeUserAdmin extends AbstractAdmin{
         $list->addIdentifier('amount');
         $list->addIdentifier('oldBalance');
         $list->addIdentifier('newBalance');
+        $list->addIdentifier('reference');
         $list->addIdentifier('createdAt');
-        $list->add('createdBy');
+        $list->addIdentifier('createdBy');
 
         
     }
@@ -80,6 +82,7 @@ final class RechargeUserAdmin extends AbstractAdmin{
         $show->add('amount');
         $show->add('oldBalance');
         $show->add('newBalance');
+        $show->add('reference');
         $show->add('createdAt');
         $show->add('createdBy');
 
@@ -87,6 +90,7 @@ final class RechargeUserAdmin extends AbstractAdmin{
     public function prePersist(object $recharge): void
     {
         //$user = $this->em->getRepository(User::class)->findBy(["username"])
+        $generator = new StringGenerator();
         $user = $recharge->getUser();
         $me = $this->ts->getToken()->getUser();
         $recharge->setCreatedBy($me->getUsername());
@@ -101,6 +105,7 @@ final class RechargeUserAdmin extends AbstractAdmin{
             
             $recharge->setNewBalance($user->getBalance());
         }
+         $recharge->setReference($generator->generate(10));
             
             $user->setUpdatedAt(new \DateTime('now',new \DateTimeZone('Africa/Kinshasa')));
             $this->em->flush();

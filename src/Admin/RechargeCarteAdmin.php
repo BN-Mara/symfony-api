@@ -76,12 +76,18 @@ final class RechargeCarteAdmin extends AbstractAdmin{
         $show->add('createdBy');
         $show->add('oldBalance');
         $show->add('newBalance');
+        $show->add('fromDate');
+        $show->add('toDate');
+        $show->add('oldFromDate');
+        $show->add('oldToDate');
+
 
 
     }
     public function prePersist(object $recharge): void
     {
         //$user = $this->em->getRepository(User::class)->findBy(["username"])
+        
        
 
     }

@@ -3,6 +3,7 @@
 namespace App\Admin;
 
 use App\Entity\Competition;
+use App\Entity\Line;
 use App\Entity\Notification;
 use App\Entity\Region;
 use App\Service\NotificationService;
@@ -30,8 +31,8 @@ final class VehicleAdmin extends AbstractAdmin{
 
     protected function configureFormFields(FormMapper $form): void
     {
-        $form->add('region', EntityType::class,[
-            'class' => Region::class,
+        $form->add('Line', EntityType::class,[
+            'class' => Line::class,
             'choice_label' => 'name',
             'multiple' => false,
             'expanded' => false,
@@ -66,7 +67,7 @@ final class VehicleAdmin extends AbstractAdmin{
         $list->addIdentifier('name');
         $list->addIdentifier('matricule');
         $list->addIdentifier('deviceID');
-        $list->addIdentifier('region.name');
+        $list->addIdentifier('line.name');
         $list->addIdentifier('currentLat');
         $list->addIdentifier('currentLng');
 

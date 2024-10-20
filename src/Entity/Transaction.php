@@ -25,14 +25,33 @@ class Transaction
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     private ?\DateTimeInterface $createdAt = null;
 
-    #[ORM\ManyToOne(inversedBy: 'yes')]
-    private ?Route $route = null;
-
     #[ORM\Column(nullable: true)]
     private ?float $oldBalance = null;
 
     #[ORM\Column(nullable: true)]
     private ?float $newBalance = null;
+
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
+    private ?\DateTimeInterface $oldFromDate = null;
+
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
+    private ?\DateTimeInterface $oldToDate = null;
+
+    #[ORM\Column(length: 10)]
+    private ?string $reference = null;
+
+    #[ORM\Column(length: 10)]
+    private ?string $paymentType = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?float $latitude = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?float $longitude = null;
+
+    #[ORM\ManyToOne(inversedBy: 'transactions')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Route $route = null;
     public function __construct()
     {
        
@@ -79,18 +98,6 @@ class Transaction
         return $this;
     }
 
-    public function getRoute(): ?Route
-    {
-        return $this->route;
-    }
-
-    public function setRoute(?Route $route): self
-    {
-        $this->route = $route;
-
-        return $this;
-    }
-
     public function getOldBalance(): ?float
     {
         return $this->oldBalance;
@@ -111,6 +118,90 @@ class Transaction
     public function setNewBalance(?float $newBalance): static
     {
         $this->newBalance = $newBalance;
+
+        return $this;
+    }
+
+    public function getOldFromDate(): ?\DateTimeInterface
+    {
+        return $this->oldFromDate;
+    }
+
+    public function setOldFromDate(?\DateTimeInterface $oldFromDate): static
+    {
+        $this->oldFromDate = $oldFromDate;
+
+        return $this;
+    }
+
+    public function getOldToDate(): ?\DateTimeInterface
+    {
+        return $this->oldToDate;
+    }
+
+    public function setOldToDate(?\DateTimeInterface $oldToDate): static
+    {
+        $this->oldToDate = $oldToDate;
+
+        return $this;
+    }
+
+    public function getReference(): ?string
+    {
+        return $this->reference;
+    }
+
+    public function setReference(string $reference): static
+    {
+        $this->reference = $reference;
+
+        return $this;
+    }
+
+    public function getPaymentType(): ?string
+    {
+        return $this->paymentType;
+    }
+
+    public function setPaymentType(string $paymentType): static
+    {
+        $this->paymentType = $paymentType;
+
+        return $this;
+    }
+
+    public function getLatitude(): ?float
+    {
+        return $this->latitude;
+    }
+
+    public function setLatitude(?float $latitude): static
+    {
+        $this->latitude = $latitude;
+
+        return $this;
+    }
+
+    public function getLongitude(): ?float
+    {
+        return $this->longitude;
+    }
+
+    public function setLongitude(?float $longitude): static
+    {
+        $this->longitude = $longitude;
+
+        return $this;
+    }
+
+    public function getRoute(): ?Route
+    {
+        return $this->route;
+    }
+
+    public function setRoute(?Route $route): static
+    {
+        $this->route = $route;
 
         return $this;
     }

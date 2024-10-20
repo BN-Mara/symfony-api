@@ -56,8 +56,12 @@ final class TransactionAdmin extends AbstractAdmin{
         $list->addIdentifier('card.uid');
         $list->addIdentifier('amount');
         $list->addIdentifier('createdAt');
-        $list->add('oldBalance');
-        $list->add('newBalance');
+        $list->addIdentifier('oldBalance');
+        $list->addIdentifier('newBalance');
+        $list->addIdentifier('fromDate');
+        $list->addIdentifier('toDate');
+        $list->addIdentifier('oldFromDate');
+        $list->addIdentifier('oldToDate');
         $list->addIdentifier('route.vehicle.name');
 
         
@@ -72,6 +76,10 @@ final class TransactionAdmin extends AbstractAdmin{
         $show->add('createdAt');
         $show->add('oldBalance');
         $show->add('newBalance');
+        $show->add('fromDate');
+        $show->add('toDate');
+        $show->add('oldFromDate');
+        $show->add('oldToDate');
 
     }
     public function prePersist(object $user): void

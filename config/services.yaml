@@ -37,9 +37,6 @@ services:
         class: App\EventListener\AuthenticationSuccessListener
         tags:
             - { name: kernel.event_listener, event: lexik_jwt_authentication.on_authentication_success, method: onAuthenticationSuccessResponse }
-    
-    
-    
     admin.users:
         class: App\Admin\UserAdmin
         tags:
@@ -60,6 +57,27 @@ services:
         class: App\Admin\RegionAdmin
         tags:
             - { name: sonata.admin, model_class: App\Entity\Region, manager_type: orm, label: Regions, group: Places }
+    admin.lines:
+        class: App\Admin\LineAdmin
+        tags:
+            - { name: sonata.admin, model_class: App\Entity\Line, manager_type: orm, group: "Places", label: "Lines" }
+        arguments:
+            - '@security.token_storage'
+        # Admin service for the Stop entity
+    admin.stops:
+        class: App\Admin\StopAdmin
+        tags:
+            - { name: sonata.admin, model_class: App\Entity\Stop, manager_type: orm, group: "Places", label: "Stops" }
+        arguments:
+            - '@security.token_storage'
+    
+    # Admin service for the Enterprise entity
+    admin.enterprises:
+        class: App\Admin\EnterpriseAdmin
+        tags:
+            - { name: sonata.admin, model_class: App\Entity\Enterprise, manager_type: orm, group: "Enterprises", label: "Enterprise" }
+        arguments:
+            - '@security.token_storage'
     admin.cards:
         class: App\Admin\CardAdmin
         tags:
@@ -102,7 +120,14 @@ services:
         class: App\Admin\AlertAdmin
         tags:
             - { name: sonata.admin, model_class: App\Entity\Alert, manager_type: orm, label: Alert, group: Alerts,icon: "<i class=\"fa fa-bell\"></i>" }
-    
+     # Admin service for the SubscriptionPlan entity
+    App\Admin\SubscriptionPlanAdmin:
+        tags:
+            - { name: sonata.admin, manager_type: orm, group: "Subscription", label: "Subscription Plan" }
+        arguments:
+            - ~
+            - App\Entity\SubscriptionPlan
+            - ~
     
     #admin.notification:
         #class: App\Admin\NotificationAdmin
