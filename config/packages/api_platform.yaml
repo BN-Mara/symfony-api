@@ -1,3 +1,7 @@
 api_platform:
     defaults:
         pagination_enabled: false
+    eager_loading:
+        enabled: true
+        fetch_partial: true
+        force_eager: false

@@ -20,7 +20,7 @@ framework:
         log: true
     
     translator: { fallbacks: ['%locale%'] }
-    
+    serializer: { enable_annotations: true }
 when@test:
     framework:
         test: true

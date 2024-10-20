@@ -15,42 +15,55 @@ use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: VehicleRepository::class)]
-#[ApiResource(operations:[new Get(), new Post(), new Put(),new GetCollection()])]
+#[ApiResource(operations:[new Get(), new Post(), new Put(),new GetCollection()],
+    normalizationContext: ['groups' => ['vehicle:read']],
+    denormalizationContext: ['groups' => ['vehicle:write']]
+)]
 #[ApiFilter(SearchFilter::class,properties:['deviceID'=>'exact'])]
 class Vehicle
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['vehicle:read', 'vehicle:write'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 64)]
+    #[Groups(['vehicle:read'])]
+
     private ?string $name = null;
 
     #[ORM\Column(length: 24)]
+    #[Groups(['vehicle:read'])]
     private ?string $matricule = null;
 
     #[ORM\Column(nullable: true)]
+    #[Groups(['vehicle:read'])]
     private ?float $currentLat = null;
 
     #[ORM\Column(nullable: true)]
+    #[Groups(['vehicle:read'])]
     private ?float $currentLng = null;
 
     #[ORM\OneToMany(mappedBy: 'vehicle', targetEntity: Route::class)]
     private Collection $routes;
 
     #[ORM\Column(length: 64, nullable: true)]
+    #[Groups(['vehicle:read'])]
     private ?string $deviceID = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Groups(['vehicle:read'])]
     private ?string $voletJaune = null;
 
     #[ORM\OneToMany(mappedBy: 'vehicle', targetEntity: User::class)]
     private Collection $users;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
+    #[Groups(['vehicle:read'])]
     private ?\DateTimeInterface $updatedAt = null;
 
     const SERVER_PATH_TO_IMAGE_FOLDER = 'images/vehicles';
@@ -82,6 +95,7 @@ class Vehicle
 
     #[ORM\ManyToOne(inversedBy: 'vehicles')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups(['vehicle:read'])]
     private ?Line $line = null;
 
     public function __construct()
