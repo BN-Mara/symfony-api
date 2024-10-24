@@ -11,37 +11,28 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: LineRepository::class)]
-#[ApiResource(
-    normalizationContext: ['groups' => ['line:read']],
-    denormalizationContext: ['groups' => ['line:write']]
-)]
+#[ApiResource()]
 class Line
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['line:read', 'child:read'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 100)]
-    #[Groups(['line:read', 'child:read'])]
     private ?string $name = null;
 
     #[ORM\Column(length: 128, nullable: true)]
-    #[Groups(['line:read', 'child:read'])]
     private ?string $description = null;
 
     #[ORM\Column(length: 10)]
-    #[Groups(['line:read', 'child:read'])]
     private ?string $paymentType = null;
 
     #[ORM\ManyToOne(inversedBy: 'liness')]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups(['line:read', 'child:read'])]
     private ?Region $region = null;
 
     #[ORM\Column(nullable: true)]
-    #[Groups(['line:read', 'child:read'])]
     private ?float $ticketPrice = null;
 
     #[ORM\ManyToMany(targetEntity: NfcCard::class, mappedBy: 'liness')]

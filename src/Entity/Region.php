@@ -27,9 +27,6 @@ class Region
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     private ?\DateTimeInterface $createdAt = null;
 
-    #[ORM\OneToMany(mappedBy: 'region', targetEntity: TicketPrice::class)]
-    private Collection $ticketPrices;
-
     #[ORM\OneToMany(mappedBy: 'region', targetEntity: Line::class)]
     private Collection $liness;
 
@@ -38,7 +35,7 @@ class Region
         
         $this->createdAt = new \DateTime('now',new \DateTimeZone('Africa/Kinshasa'));
         
-        $this->ticketPrices = new ArrayCollection();
+        
         $this->liness = new ArrayCollection();
     }
 
@@ -83,35 +80,9 @@ class Region
         return $this;
     }
 
-    /**
-     * @return Collection<int, TicketPrice>
-     */
-    public function getTicketPrices(): Collection
-    {
-        return $this->ticketPrices;
-    }
+    
 
-    public function addTicketPrice(TicketPrice $ticketPrice): self
-    {
-        if (!$this->ticketPrices->contains($ticketPrice)) {
-            $this->ticketPrices->add($ticketPrice);
-            $ticketPrice->setRegion($this);
-        }
-
-        return $this;
-    }
-
-    public function removeTicketPrice(TicketPrice $ticketPrice): self
-    {
-        if ($this->ticketPrices->removeElement($ticketPrice)) {
-            // set the owning side to null (unless already changed)
-            if ($ticketPrice->getRegion() === $this) {
-                $ticketPrice->setRegion(null);
-            }
-        }
-
-        return $this;
-    }
+  
 
     /**
      * @return Collection<int, Line>

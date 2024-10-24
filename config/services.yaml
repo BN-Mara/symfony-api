@@ -105,12 +105,6 @@ services:
         tags:
             - { name: sonata.admin, model_class: App\Entity\Versement, manager_type: orm, label: Versements, group: Transactions }
     
-    admin.tickets:
-        class: App\Admin\TicketPriceAdmin
-        arguments:
-            - '@security.token_storage'
-        tags:
-            - { name: sonata.admin, model_class: App\Entity\TicketPrice, manager_type: orm, label: 'Tickets Price', group: Vehicles }
     admin.logins:
         class: App\Admin\LoginsAdmin
         tags:
