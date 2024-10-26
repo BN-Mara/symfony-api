@@ -103,9 +103,9 @@ class MapViewController extends AbstractController
                 ]);
             }else{
                 $color = "bus_blue.png";
-                if($v->getRegion()->getId() == 1){
+                if($v->getLine()->getId() == 1){
                     $color = "bus_yellow.png";
-                }else if($v->getRegion()->getId() == 2){
+                }else if($v->getLine()->getId() == 2){
                     $color = "bus_green.png";
                 }else{
                     $color = "bus_blue.png";
