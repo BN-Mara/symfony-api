@@ -2,8 +2,11 @@
 
 namespace App\Controller;
 
+use App\Entity\Line;
 use App\Entity\Logins;
+use App\Entity\Region;
 use App\Entity\User;
+use App\Entity\Vehicle;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -105,8 +108,7 @@ class RegistrationController extends AbstractController
 
         //$token = $this->jwtManager->create($user);
         $authContent = json_decode($auth->getContent());
-  
-        return $this->json(['success'=>true,
+        $data = ['success'=>true,
         'message' => 'Enregistré avec succès',
         'sub'=>$ck_user->getId(),
         'username'=>$ck_user->getUsername(),
@@ -118,7 +120,38 @@ class RegistrationController extends AbstractController
         "token"=>$authContent->token,
         "refresh_token"=>$authContent->refresh_token,
         
-    ]);
+        ];
+
+        if($ck_user->getVehicle() !== null){
+            
+            $vehicle = $this->em->getRepository(Vehicle::class)->findOneBy(["id"=>$ck_user->getVehicle()->getId()]);
+            $line = $this->em->getRepository(Line::class)->findOneBy(["id"=>$vehicle->getLine()->getId()]);
+                $places = $line->getPlaces();
+                $stops = $line->getStops();
+                $region =   $this->em->getRepository(Region::class)->findOneBy(["id"=>$line->getRegion()->getId()]);
+                
+                $placeData = array();
+                $stopData = array();
+                if(!empty($places)){
+                    $placeData = array_map(function($place) {
+                        return $place->toArray();
+                    }, $places->toArray());
+                }
+                if(!empty($stops)){
+                    $stopData = array_map(function($stop) {
+                        return $stop->toArray();
+                    }, $stops->toArray());
+                }
+                $v = $vehicle->toArray();
+                $v["lineData"] = $line->toArray();
+                $v["lineData"]["places"] = $placeData;
+                $v["lineData"]["stops"] = $stopData;
+            
+                
+            $data['vehicle'] = $v;
+            }
+  
+        return $this->json($data);
             
         }else{
             return $this->json(["success"=>"false","message"=>"Invalid user"],400);
