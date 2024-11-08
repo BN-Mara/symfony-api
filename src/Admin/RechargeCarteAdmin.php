@@ -60,9 +60,12 @@ final class RechargeCarteAdmin extends AbstractAdmin{
         $list->add('card.uid');
         $list->add('amount');
         $list->add('createdAt');
+        $list->add('rechargeType');
         $list->add('oldBalance');
         $list->add('newBalance');
         $list->add('createdBy');
+        $list->add('fromDate');
+        $list->add('toDate');
 
         
     }

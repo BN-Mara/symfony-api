@@ -25,7 +25,7 @@ class Line
     #[ORM\Column(length: 128, nullable: true)]
     private ?string $description = null;
 
-    #[ORM\Column(length: 10)]
+    #[ORM\Column(length: 15)]
     private ?string $paymentType = null;
 
     #[ORM\ManyToOne(inversedBy: 'liness')]
@@ -318,5 +318,17 @@ class Line
         $this->enterprise = $enterprise;
 
         return $this;
+    }
+    public function toArray(): array{
+        return [
+            "id"=>$this->getId(),
+        "region"=>$this->getRegion()?->getId(),
+        "enterprise"=>$this->getEnterprise()?->getId(),
+        "name"=>$this->getName(),
+        "paymentType"=>$this->getPaymentType(),
+        "ticketPrice"=>$this->getTicketPrice(),
+        //"region"=>"/api/regions/".$line->getRegion()->getId(),
+        "description"=>$this->getDescription(),
+        ];
     }
 }

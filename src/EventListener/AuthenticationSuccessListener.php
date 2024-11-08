@@ -4,7 +4,9 @@ namespace App\EventListener;
 
 use App\Entity\Line;
 use App\Entity\Logins;
+use App\Entity\Place;
 use App\Entity\Region;
+use App\Entity\Stop;
 use App\Entity\UserData;
 use App\Entity\Vehicle;
 use Doctrine\ORM\EntityManagerInterface;
@@ -42,37 +44,32 @@ public function onAuthenticationSuccessResponse(AuthenticationSuccessEvent $even
     $data['address'] = $user->getAddress();
     $data['balance']  = $user->getBalance();
 
-    if($user->getVehicle()){
-    $vh = $user->getVehicle();
+    if($user->getVehicle() !== null){
+    //$vh = $user->getVehicle();
     $vehicle = $this->em->getRepository(Vehicle::class)->findOneBy(["id"=>$user->getVehicle()->getId()]);
     $line = $this->em->getRepository(Line::class)->findOneBy(["id"=>$vehicle->getLine()->getId()]);
-        $places = $line->getPlaces();//$this->em->getRepository(Place::class)->findAll();
-        $stops = $line->getStops();
+        $places = $line->getPlaces();//$this->em->getRepository(Place::class)->findBy(["line"=>$line->getId()]);
+        $stops = $line->getStops();//$this->em->getRepository(Stop::class)->findBy(["line"=>$line->getId()]);
         $region =   $this->em->getRepository(Region::class)->findOneBy(["id"=>$line->getRegion()->getId()]);
-        $v=[
-            "id"=>$vehicle->getId(),
-    "name"=>$vehicle->getName(),
-    "matricule"=>$vehicle->getMatricule(),
-    "currentLat"=> $vehicle->getCurrentLat(),
-    "currentLng"=> $vehicle->getCurrentLng(),
-    "deviceID"=> $vehicle->getDeviceID(),
-    "voletJaune"=>$vehicle->getVoletJaune(),
-    "updatedAt"=>$vehicle->getUpdatedAt(),
-    //"t"=>$vehicle->getLine(),
-    "line"=>$line->getId(),
-    "line1"=> [
-        "id"=>$line->getId(),
-        "region"=>$region->getId(),
-        "enterprise"=>$line->getEnterprise()->getId(),
-        "name"=>$line->getName(),
-        "paymentType"=>$line->getPaymentType(),
-        "ticketPrice"=>$line->getTicketPrice(),
-        //"region"=>"/api/regions/".$line->getRegion()->getId(),
-        "description"=>$line->getDescription(),
-        "places"=>$places,
-        "stops"=>$stops
-        ]
-    ];
+        
+        $placeData = array();
+        $stopData = array();
+        if(!empty($places)){
+            $placeData = array_map(function($place) {
+                return $place->toArray();
+            }, $places->toArray());
+        }
+        if(!empty($stops)){
+            $stopData = array_map(function($stop) {
+                return $stop->toArray();
+            }, $stops->toArray());
+        }
+        $v = $vehicle->toArray();
+        $v["lineData"] = $line->toArray();
+        $v["lineData"]["places"] = $placeData;
+        $v["lineData"]["stops"] = $stopData;
+    
+        
     $data['vehicle'] = $v;
     }
 

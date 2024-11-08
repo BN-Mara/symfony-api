@@ -77,6 +77,8 @@ final class CardAdmin extends AbstractAdmin{
         $list->addIdentifier('phoneNumber');
         $list->addIdentifier('balance');
         $list->addIdentifier('createdAt');
+        $list->add('subscriptionFromDate');
+        $list->add('subscriptionEndDate');
         $list->add('liness',null, [
             'associated_property' => 'name',  // Specify which property to show from the related Tag entity
             'label' => 'Lines',
@@ -95,6 +97,8 @@ final class CardAdmin extends AbstractAdmin{
         $show->add('cardHolder');
         $show->add('phoneNumber');
         $show->add('createdAt');
+        $show->add('subscriptionFromDate');
+        $show->add('subscriptionEndDate');
         $show->add('liness',null,
         [
             'label'=>"Lines",

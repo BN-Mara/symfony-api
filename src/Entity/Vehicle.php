@@ -487,4 +487,18 @@ class Vehicle
        return $this;
    }
 
+   public function toArray(): array{
+    return [
+        "id"=>$this->getId(),
+"name"=>$this->getName(),
+"matricule"=>$this->getMatricule(),
+"currentLat"=>$this->getCurrentLat(),
+"currentLng"=>$this->getCurrentLng(),
+"deviceID"=>$this->getDeviceID(),
+"voletJaune"=>$this->getVoletJaune(),
+"updatedAt"=>$this->getUpdatedAt(),
+//"t"=>$this->getLine(),
+"line"=>$this->getLine()?->getId(),];
+   }
+
 }

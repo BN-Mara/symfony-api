@@ -9,6 +9,8 @@ use App\Entity\Route as EntityRoute;
 use App\Entity\SubscriptionPlan;
 use App\Entity\Transaction;
 use App\Entity\User;
+use App\Helper\StringGenerator;
+use DateInterval;
 use DateTimeUtil;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -18,7 +20,9 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class TransactionController extends AbstractController
 {
+    private $generator;
     public function __construct(private EntityManagerInterface $em){
+        $this->generator = new StringGenerator();
 
     }
     #[Route('/transaction', name: 'app_transaction')]
@@ -126,8 +130,15 @@ class TransactionController extends AbstractController
                 return $this->json(["status"=>false,"message"=>"Votre carte est invalide."],400);
 
             }
+            $rest = $user->getBalance() - $amount;
+            $bal = $card->getBalance();
+        
+            if($rest < 0){
+            return $this->json(["status"=>false,"message"=>"Votre balance est insufisante."],400);
+            }
             
             $date = new \DateTime('now',new \DateTimeZone('Africa/Kinshasa'));
+            $now = new \DateTime('now',new \DateTimeZone('Africa/Kinshasa'));
             $card->setUpdatedAt($date);
             $user->setUpdatedAt($date);
             
@@ -136,31 +147,34 @@ class TransactionController extends AbstractController
             $trans->setCard($card);
             $trans->setCreatedBy($user->getUsername());
             $trans->setCreatedAt($date);
-            if($type == "FIX"){
-                $rest = $user->getBalance() - $amount;
-                $bal = $card->getBalance();
             
-            if($rest < 0){
-                return $this->json(["status"=>false,"message"=>"Votre balance est insufisante."],400);
-            }
+            $trans->setReference($this->generator->generate(10));
+           
+            if($type == "FIX"){
+               
                 $card->setBalance($card->getBalance() + $amount);
-                $user->setBalance($rest);
+                
             $trans->setOldBalance($bal);
             $trans->setNewBalance($card->getBalance());
 
             }
             
             if($type == "SUBSCRIPTION"){
-           
+                $durationInDays = $subs->getDuration();
+                $interval = new DateInterval("P{$durationInDays}D");
+                $now->add($interval);
             $card->setSubscriptionEndDate($date);
-            $card->setSubscriptionEndDate($date->modify("+".$subs->getDuration().""));
+            $card->setSubscriptionEndDate( $now);
             $trans->setFromDate($date);
-            $trans->setToDate($date->modify("+".$subs->getDuration().""));
+            $trans->setToDate( $now);
             $trans->setOldFromDate($card->getSubscriptionFromDate());
             $trans->setOldToDate($card->getSubscriptionEndDate());
             $trans->setSubscriptionId($subs_id);
+            $trans->setRechargeType($type);
             
             }
+            $user->setBalance($rest);
+            $this->em->persist($user);
             $this->em->persist($card);
             //$trans->setRouteId($routeId);
             $this->em->persist($trans);

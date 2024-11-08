@@ -116,4 +116,13 @@ class Stop
 
         return $this;
     }
+    public function toArray(): array{
+        return [
+            "id"=>$this->getId(),
+            "name"=>$this->getName(),
+        "lat"=>$this->getLat(),
+        "lng"=>$this->getLng(),
+        "line"=>$this->getLine()?->getId(),
+    ];
+    }
 }

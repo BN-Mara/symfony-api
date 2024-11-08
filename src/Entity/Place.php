@@ -104,6 +104,16 @@ class Place
 
         return $this;
     }
+    public function toArray(): array
+    {
+        return [
+            'id' => $this->id,
+            'name' => $this->name,
+            'latitude' => $this->latitude,
+            'longitude' => $this->longitude,
+            'line' => $this->line?->getId(), // Assuming related entity has getId()
+        ];
+    }
 
 
 }
