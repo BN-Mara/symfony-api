@@ -36,15 +36,19 @@
     "zepto",
     "zepto-plugin"
   ],
-  "licenses": [{
-    "type": "MIT",
-    "url": "http://www.opensource.org/licenses/mit-license.php"
-  },{
-    "type": "GPL-2.0",
-    "url": "http://www.gnu.org/licenses/gpl-2.0.html"
-  }],
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "http://www.opensource.org/licenses/mit-license.php"
+    },
+    {
+      "type": "GPL-2.0",
+      "url": "http://www.gnu.org/licenses/gpl-2.0.html"
+    }
+  ],
   "dependencies": {
-    "jquery": ">=1.7.2"
+    "jquery": ">=1.7.2",
+    "jquery-lazy": "file:"
   },
   "devDependencies": {
     "gulp": "^3.9.1",

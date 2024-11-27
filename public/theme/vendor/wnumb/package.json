@@ -11,5 +11,8 @@
   "license": "WTFPL",
   "bugs": {
     "url": "https://github.com/leongersen/wnumb/issues"
+  },
+  "dependencies": {
+    "wnumb": "file:"
   }
 }
