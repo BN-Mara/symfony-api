@@ -1,19 +1,16 @@
 {% extends 'base.html.twig' %}
     {% block stylesheets %}
-        <link
+    <link
       href="https://fonts.googleapis.com/icon?family=Material+Icons"
       rel="stylesheet"
     />
     {% endblock %}
   {% block javascripts %}
-    <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@babel/polyfill/dist/polyfill.min.js"></script>
   {% endblock %}
    
 
     {% block body %}
-  
-    <!-- before the closing <body> tag -->
-    
 
     <div id="map" style="width:100%;height:1000px;"></div>
 
@@ -25,14 +22,14 @@
       var code ="";
       var ctype = "";
 
-function setMarkers(vehs){
+    function setMarkers(vehs){
         // Create info window
         infowindow = new google.maps.InfoWindow({
     maxWidth: 350,
     pixelOffset: new google.maps.Size(-10,-25)
   });
   
-  var infoFn = function (count) {
+        var infoFn = function (count) {
             return function (e) {
               var ar = "";
               
@@ -51,6 +48,7 @@ function setMarkers(vehs){
                 arrayMarkers[count].infowindow = infowindow;
             }
         };
+
         for (let i = 0; i < vehs.length; i++){
           const image =
           "{{  app.request.schemeAndHttpHost }}"+"/images/bus_red.png";
@@ -63,14 +61,14 @@ function setMarkers(vehs){
           title: vehs[i].name,
         });
       
-        /*const marker = new google.maps.Marker({
-          position: new google.maps.LatLng(vehs[i].lat, vehs[i].lng),
-          map,
-          content: beachFlagImg,
-          title: vehs[i].name,
-          zIndex: vehs[i].id,
-            });*/
-          // Add a click listener for each marker, and set up the info window.
+            /*const marker = new google.maps.Marker({
+              position: new google.maps.LatLng(vehs[i].lat, vehs[i].lng),
+              map,
+              content: beachFlagImg,
+              title: vehs[i].name,
+              zIndex: vehs[i].id,
+                });*/
+              // Add a click listener for each marker, and set up the info window.
           let fn = infoFn(i);
           google.maps.event.addListener(marker, 'click', fn);
           arrayMarkers[i] = marker;

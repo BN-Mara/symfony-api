@@ -21,7 +21,6 @@
             <div class="rectangle-1">&nbsp;</div>
         </div>
     </div>
-    <!-- Brgin header -->
     <div class="header-wrap">
         <header>
             <a href="index.html" class="logo">
@@ -45,6 +44,7 @@
                         </li>
                         <li><a href="services.html">OUR SERVICES</a></li>
                         <li><a href="contact.html">CONTACTS</a></li>
+                        <li><a href="{{ path('app_recharge') }}">RECHARGE</a></li>
                     </ul>
                     <span class="menu-gradient"></span>
                 </nav>
@@ -56,8 +56,6 @@
             </div>
         </header>
     </div>
-    <!-- End header -->
-    <!-- Begin main-slider -->
     <div class="main-slider-wrap">
         <div class="main-slider"
              data-slick='{
@@ -79,20 +77,6 @@
                     </div>
                 </div>
             </div>
-            <!--<div class="tt-slide">
-                <div class="slide-bg" data-src="./img/main-slider-2.jpg">
-                    <img src="{{ asset('theme/img/main-slider-2.jpg') }}" alt="bg">
-                </div>
-                <div class="container">
-                    <div class="row">
-                        <div class="col-12 text-center">
-                            <p class="tt-slide_description">Bring music to life</p>
-                            <p class="tt-slide_header"><span class="font-gradient">NO STUDIO YET?</span><br>No Problem.</p>
-                            <a href="#" class="button">Learn More</a>
-                        </div>
-                    </div>
-                </div>
-            </div>-->
         </div>
         <div id="awp-home-player" class="awp-home-player">
             <div class="awp-player-holder">
@@ -466,30 +450,20 @@
                     </svg>
                 </button>
                 <h3 class="text-center">Connectez-vous</h3>
-                <form action="{{path('buses_map')}}" method="POST"  class="book-form" >
+                {{ form_start(form, {'attr': {'class': 'book-form'}}) }}
                     <div class="tt-form-row">
                         <span class="tt-form-control tt-form-control_66">
-                            <input type="text" name="code" placeholder="Code of card *" required>
+                            {{ form_widget(form.code, {'attr': {'placeholder': 'Code of card *'}}) }}
                         </span>
                         <span class="tt-form-control tt-form-control_33">
                             <span class="selectWrapper">
-                                
-                                <select name="customer-type" class="tt-custom-select form-control">
-                                    <option value="PARENT">Parent</option>
-                                    <option value="OWNER">Proprietaire</option>
-                                </select>
+                                {{ form_widget(form.type, {'attr': {'class': 'tt-custom-select form-control'}}) }}
                             </span>
                         </span>
                     </div>
-                    
-                      <div class="tt-form-control tt-form-control_33">
-                           
-                        </div>
-                    </div>
                     <br>
-                    <button type="submit" class="button white btn-border">
-                    Commencer</button>
-                </form>
+                    {{ form_widget(form.submit, {'attr': {'class': 'button white btn-border'}}) }}
+                {{ form_end(form) }}
             </div>
         </div>
     </div>
