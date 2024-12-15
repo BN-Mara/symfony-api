@@ -1,59 +1,8 @@
 sonata_admin:
-    security:
-        handler: sonata.admin.security.handler.acl
-        acl_user_manager: App\Manager\AclUserManager
-    title: 'TransCar'
+    title: 'Sonata Admin'
     dashboard:
         blocks:
-            -
-                class:    col-lg-3 col-xs-6          # twitter bootstrap responsive code
-                position: top                        # zone in the dashboard
-                type:     sonata.admin.block.stats   # block id
-                settings:
-                    code:  admin.routes    # admin code - service id
-                    icon:  fas fa-magic               # font awesome icon
-                    text:  Total Routes            # static text or translation message
-                    color: bg-yellow                 # colors: bg-green, bg-red and bg-aqua
-                    filters:                         # filter values
-                    #edited: { value: 1 }
-            #- { type: sonata.admin.block.admin_list, position: left }
-            -
-                class:    col-lg-3 col-xs-6          # twitter bootstrap responsive code
-                position: top                        # zone in the dashboard
-                type:     sonata.admin.block.stats   # block id
-                settings:
-                    code:  admin.routes    # admin code - service id
-                    icon:  fas fa-magic               # font awesome icon
-                    text:  Routes Aujourd'hui            # static text or translation message
-                    color: bg-aqua                 # colors: bg-green, bg-red and bg-aqua
-                    filters:                         # filter values
-                        startingTime: { value: { start: { month: '%env(CURR_DATE_M)%', day: '%env(CURR_DATE_D)%', year : '%env(CURR_DATE_Y)%'} } }
-                        #prime: { value: 1}
-            -
-                class:    col-lg-3 col-xs-6          # twitter bootstrap responsive code
-                position: top                        # zone in the dashboard
-                type:     sonata.admin.block.stats   # block id
-                settings:
-                    code:  admin.vehicles    # admin code - service id
-                    icon:  fas fa-magic               # font awesome icon
-                    text:  Total Vehicles            # static text or translation message
-                    color: bg-green                 # colors: bg-green, bg-red and bg-aqua
-                    filters:                         # filter values
-                    #edited: { value: 1 }
-            -
-                class:    col-lg-3 col-xs-6          # twitter bootstrap responsive code
-                position: top                        # zone in the dashboard
-                type:     sonata.admin.block.stats   # block id
-                settings:
-                    code:  admin.users    # admin code - service id
-                    icon:  fas fa-people              # font awesome icon
-                    text:  Conveyors        # static text or translation message
-                    color: bg-aqua                 # colors: bg-green, bg-red and bg-aqua
-                    filters:                         # filter values
-                        roles: { value: "ROLE_CONVEYOR" } 
-                        #prime: { value: 1}
-    
-    title_logo: images/logo_title.png 
+            - { type: sonata.admin.block.admin_list, position: left }
 
 sonata_block:
     blocks:
