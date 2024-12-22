@@ -1,5 +1,4 @@
 <?php
-// src/Admin/SubscriptionPlanAdmin.php
 namespace App\Admin;
 
 use Sonata\AdminBundle\Admin\AbstractAdmin;
@@ -11,9 +10,9 @@ use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 
 class SubscriptionPlanAdmin extends AbstractAdmin
 {
-    protected function configureFormFields(FormMapper $formMapper): void
+    protected function configureFormFields(FormMapper $form): void
     {
-        $formMapper
+        $form
             ->add('title')
             ->add('description', null, [
                 'required' => false
@@ -25,9 +24,9 @@ class SubscriptionPlanAdmin extends AbstractAdmin
             ]);
     }
 
-    protected function configureDatagridFilters(DatagridMapper $datagridMapper): void
+    protected function configureDatagridFilters(DatagridMapper $filter): void
     {
-        $datagridMapper
+        $filter
             ->add('title')
             ->add('amount')
             ->add('duration')
@@ -35,9 +34,9 @@ class SubscriptionPlanAdmin extends AbstractAdmin
             ->add('createdAt');
     }
 
-    protected function configureListFields(ListMapper $listMapper): void
+    protected function configureListFields(ListMapper $list): void
     {
-        $listMapper
+        $list
             ->addIdentifier('id')
             ->add('title')
             ->add('amount')
@@ -46,9 +45,9 @@ class SubscriptionPlanAdmin extends AbstractAdmin
             ->add('createdAt');
     }
 
-    protected function configureShowFields(ShowMapper $showMapper): void
+    protected function configureShowFields(ShowMapper $show): void
     {
-        $showMapper
+        $show
             ->add('id')
             ->add('title')
             ->add('description')
@@ -57,12 +56,12 @@ class SubscriptionPlanAdmin extends AbstractAdmin
             ->add('createdBy')
             ->add('createdAt');
     }
-    public function prePersist(object $user): void
+    public function prePersist(object $object): void
     {
         
     }
 
-    public function preUpdate(object $user): void
+    public function preUpdate(object $object): void
     {
       
     }
